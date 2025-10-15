@@ -7,9 +7,15 @@ public class TerrainGenerator : MonoBehaviour
     public int height = 256;
     public int depth = 20;
     public float scale = 20f;
+    // Offsets for Perlin noise to create random terrain
+    public float offsetX = 100f;
+    public float offsetY = 100f;
 
     public void Start()
     {
+        // Set random offsets for Perlin noise
+        offsetX = Random.Range(0f, 9999f);
+        offsetY = Random.Range(0f, 9999f);
         // Generate Terrain by calling terrain function
         Terrain terrain = GetComponent<Terrain>();
         terrain.terrainData = GenerateTerrain(terrain.terrainData);
@@ -43,8 +49,8 @@ public class TerrainGenerator : MonoBehaviour
     float CalculateHeight(int x, int y)
     {
         // Use Perlin noise to create a height value for the inputted coordinates
-        float xCoord = (float)x / width * scale;
-        float yCoord = (float)y / height * scale;
+        float xCoord = (float)x / width * scale + offsetX;
+        float yCoord = (float)y / height * scale + offsetY;
 
         return Mathf.PerlinNoise(xCoord, yCoord);
     }
