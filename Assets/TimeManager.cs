@@ -13,12 +13,14 @@ public class TimeManager : MonoBehaviour
     public int Days { get { return days; } set { days = value; OnDaysChanged(value); } }
 
     private float tempSecond;
+    public string timeOfDay => $"{Hours:D2}:{Minutes:D2}";
+    public string currDay => $"Day {Days}";
 
     public void Update()
     {
         // Increments tempSecond by the time passed since the last frame, and if it reaches 1 second, increments minutes - current time scale is 1 real time second = 1 game minute
         tempSecond += Time.deltaTime;
-        if (tempSecond >= 1f)
+        if (tempSecond >= 0.05f)
         {
             Minutes += 1;
             tempSecond = 0f;
@@ -55,5 +57,14 @@ public class TimeManager : MonoBehaviour
     private void OnDaysChanged(int days)
     {
         // Handle day changes (e.g., update UI, trigger events)
+    }
+    private void OnGUI()
+    {
+        // Simple on-screen display for time and player status - update once own UI system is in place
+        GUI.skin.label.fontSize = 20;
+
+        GUI.Label(new Rect(10, 70, 300, 30), timeOfDay);
+        GUI.Label(new Rect(10, 100, 300, 30), currDay);
+
     }
 }
