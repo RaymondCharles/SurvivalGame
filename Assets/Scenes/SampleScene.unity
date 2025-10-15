@@ -1112,6 +1112,7 @@ MonoBehaviour:
   switchSpeed: 10
   isThirdPerson: 0
   toggleKey: 113
+  canLook: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2648,6 +2649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventory: {fileID: 609054356}
+  playerCam: {fileID: 292525925}
 --- !u!4 &1404482757
 Transform:
   m_ObjectHideFlags: 0
