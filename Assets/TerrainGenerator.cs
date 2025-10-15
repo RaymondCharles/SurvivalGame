@@ -1,12 +1,15 @@
 using UnityEngine;
 
+//TODO:
+// 1. Add Octaves to create more complex terrain
+// 2. Consider if we want to have it generate a full map or more like a chunk system
 public class TerrainGenerator : MonoBehaviour
 {
     // Terrain dimensions
     public int width = 256;
     public int height = 256;
-    public int depth = 20;
-    public float scale = 20f;
+    public int depth = 15;
+    public float scale = 5f;
     // Offsets for Perlin noise to create random terrain
     public float offsetX = 100f;
     public float offsetY = 100f;
