@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
+    // Import Skybox Textures
+    [SerializeField] private Material daySkybox;
+    [SerializeField] private Material nightSkybox;
+
     // Time variables
     private int minutes;
     public int Minutes { get { return minutes; } set { minutes = value; OnMinutesChanged(value); } }
@@ -18,12 +22,12 @@ public class TimeManager : MonoBehaviour
 
     public void Update()
     {
-        // Increments tempSecond by the time passed since the last frame, and if it reaches 1 second, increments minutes - current time scale is 1 real time second = 1 game minute
+        // Increments tempSecond by the time passed since the last frame, and if it reaches 1 second, increments minutes - set to 0.005f for faster testing
         tempSecond += Time.deltaTime;
-        if (tempSecond >= 0.05f)
+        while (tempSecond >= 0.005f)
         {
             Minutes += 1;
-            tempSecond = 0f;
+            tempSecond -= 0.005f;
         }
     }
 
@@ -44,14 +48,14 @@ public class TimeManager : MonoBehaviour
             Hours = 0;
             Days += 1;
         }
-        // Handle hour changes (just Skybox for now)
+        // Handle hour changes (just changing Skybox for now)
         if (hr >= 6 && hr < 18)
         {
-            
+            RenderSettings.skybox = daySkybox;
         }
         else
         {
-            
+            RenderSettings.skybox = nightSkybox;
         }
     }
     private void OnDaysChanged(int days)
@@ -65,6 +69,7 @@ public class TimeManager : MonoBehaviour
 
         GUI.Label(new Rect(10, 70, 300, 30), timeOfDay);
         GUI.Label(new Rect(10, 100, 300, 30), currDay);
+        GUI.Label(new Rect(10, 130, 300, 30), "TempSecs: " + tempSecond);
 
     }
 }
