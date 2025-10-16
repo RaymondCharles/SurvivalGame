@@ -1,25 +1,19 @@
-using NUnit.Framework;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu (fileName ="Item", menuName ="RumbledCode/Item", order =1)]
+[CreateAssetMenu(fileName = "Item", menuName = "RumbledCode/Item", order = 1)]
 public class Item : ScriptableObject
 {
-
+    [Header("Basic Info")]
     public string id;
     public string desc;
     public Sprite icon;
     public GameObject prefab;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [Header("Usage Settings")]
+    public bool isConsumable;      // Can the player use it?
+    public int hpRestoreAmount;    // How much HP it restores
+    public int hungerRestoreAmount;// How much Hunger it restores
+
+    // Optional: if you want items that can be both dropped and used differently
+    public bool canBeDropped = true;
 }

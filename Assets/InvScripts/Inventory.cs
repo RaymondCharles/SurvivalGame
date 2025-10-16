@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-//[RequireComponent(typeof(Colldier))]
+//[RequireComponent(typeof(Collider))]
 public class Inventory : MonoBehaviour
 {
     public InventoryUi ui;
@@ -12,6 +12,7 @@ public class Inventory : MonoBehaviour
     public GameObject droppedItemPrefab;
     public AudioClip pickupAudio;
     public AudioClip droppedAudio;
+
     [SerializeField]
     SerializedDictionary<string, Item> inventory = new();
 
@@ -37,12 +38,10 @@ public class Inventory : MonoBehaviour
         inventory.Add(inventoryId, item);
         ui.AddUIItem(inventoryId, item);
     }
+
     public void DropItem(string inventoryId)
     {
-
-
         var droppedItem = Instantiate(droppedItemPrefab, transform.position, Quaternion.identity).GetComponent<DroppedItem>();
-        Debug.Log("Spawned prefab: " + droppedItem.name);
 
         var item = inventory.GetValueOrDefault(inventoryId);
         droppedItem.Initialize(item);
@@ -51,15 +50,27 @@ public class Inventory : MonoBehaviour
         audioSource.PlayOneShot(droppedAudio);
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void RemoveItemFromInventory(string inventoryId)
     {
-
+        if (inventory.ContainsKey(inventoryId))
+        {
+            inventory.Remove(inventoryId);
+            ui.RemoveUIItem(inventoryId);
+            Debug.Log("Item used and removed from inventory.");
+        }
     }
 
-    // Update is called once per frame
+    // NEW: Add this method to safely get an item by ID
+    public bool TryGetItem(string inventoryId, out Item item)
+    {
+        return inventory.TryGetValue(inventoryId, out item);
+    }
+
+    void Start()
+    {
+    }
+
     void Update()
     {
-
     }
 }

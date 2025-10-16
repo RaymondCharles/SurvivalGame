@@ -43,7 +43,7 @@ public class DroppedItem : MonoBehaviour
 
         var droppedItem = Instantiate(item.prefab, transform);
 
-        Debug.Log($"Spawned prefab: {droppedItem.name} at {droppedItem.transform.position}");
+        //Debug.Log($"Spawned prefab: {droppedItem.name} at {droppedItem.transform.position}");
 
         droppedItem.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         StartCoroutine(EnablePickup(enabledPickupDelay));

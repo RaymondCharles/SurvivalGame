@@ -16,3 +16,7 @@ MonoBehaviour:
   desc: This is a BINO
   icon: {fileID: 21300000, guid: dbb1a104925b40f4786021ded6ea3403, type: 3}
   prefab: {fileID: 5799510482534068527, guid: a012e7b405474bc4fad324df58d6942d, type: 3}
+  isConsumable: 1
+  hpRestoreAmount: 10
+  hungerRestoreAmount: 5
+  canBeDropped: 1
