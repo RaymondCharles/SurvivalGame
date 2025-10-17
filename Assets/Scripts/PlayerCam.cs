@@ -19,6 +19,10 @@ public class PlayerCam : MonoBehaviour
 
     private float xRotation;
     private float yRotation;
+    public bool canLook = true; // N
+
+
+
 
     private void Start()
     {
@@ -32,24 +36,55 @@ public class PlayerCam : MonoBehaviour
         currentDistance = firstPersonDistance;
     }
 
+    //private void Update()
+    //{
+    //    // 1. Cursor Management for Resuming Control (Click to lock)
+    //    if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked)
+    //    {
+    //        Cursor.lockState = CursorLockMode.Locked;
+    //        Cursor.visible = false;
+    //    }
+
+    //    // 2. Guaranteed Toggle Check
+    //    if (Input.GetKeyDown(toggleKey))
+    //    {
+    //        ToggleView();
+    //    }
+
+
+    //    // 3. Get Mouse Input (Only process if cursor is locked for movement)
+    //    if (Cursor.lockState == CursorLockMode.Locked)
+    //    {
+    //        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
+    //        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+
+    //        yRotation += mouseX;
+    //        xRotation -= mouseY;
+    //        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+    //    }
+
+    //    // 4. Rotate Camera and Orientation
+    //    transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+    //    orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+    //}
+
     private void Update()
     {
-        // 1. Cursor Management for Resuming Control (Click to lock)
-        if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked)
+        // 1. Cursor Management (Only if camera is active)
+        if (canLook && Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
 
-        // 2. Guaranteed Toggle Check
-        if (Input.GetKeyDown(toggleKey))
+        // 2. Toggle View (Q key)
+        if (canLook && Input.GetKeyDown(toggleKey))
         {
             ToggleView();
         }
 
-
-        // 3. Get Mouse Input (Only process if cursor is locked for movement)
-        if (Cursor.lockState == CursorLockMode.Locked)
+        // 3. Mouse Input (Only if active)
+        if (canLook && Cursor.lockState == CursorLockMode.Locked)
         {
             float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
             float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
@@ -59,10 +94,11 @@ public class PlayerCam : MonoBehaviour
             xRotation = Mathf.Clamp(xRotation, -90f, 90f);
         }
 
-        // 4. Rotate Camera and Orientation
+        // 4. Rotate Camera and Orientation (still runs)
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
     }
+
 
     private void FixedUpdate()
     {
