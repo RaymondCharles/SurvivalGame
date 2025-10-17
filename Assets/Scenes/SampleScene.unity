@@ -5312,7 +5312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a2d80a947f3f6340ad449ca66daf00a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  daySkybox: {fileID: 0}
+  daySkybox: {fileID: 2100000, guid: 0c6ba57e787608b46a5ca4daeb405e4e, type: 2}
   nightSkybox: {fileID: 2100000, guid: ea433307fb404424d9c58a6c8851d80c, type: 2}
 --- !u!4 &1257491930
 Transform:
