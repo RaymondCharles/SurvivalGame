@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour
 {
     public GameObject inventory;
     public PlayerCam playerCam;
+    
 
     void Update()
     {
