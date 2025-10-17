@@ -15,7 +15,7 @@ MonoBehaviour:
   id: BINOO
   desc: this is a BINOOO
   icon: {fileID: 21300000, guid: dbb1a104925b40f4786021ded6ea3403, type: 3}
-  prefab: {fileID: 919132149155446097, guid: fb56b246d277a2f4dbc90151ce337d7e, type: 3}
+  prefab: {fileID: 1014687663968737994, guid: d287580559fc9b4489a194b078016b2d, type: 3}
   isConsumable: 0
   hpRestoreAmount: 0
   hungerRestoreAmount: 0
