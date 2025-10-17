@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.15449704, g: 0.80912673, b: 0.9745066, a: 1}
+  m_IndirectSpecularColor: {r: 0.1545001, g: 0.8091111, b: 0.9744775, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1044,10 +1044,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109a46bc6ae4bc84a9d03225bc7a52d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 256
-  height: 256
-  depth: 15
-  scale: 5
+  width: 2000
+  height: 2000
+  depth: 50
+  scale: 20
   offsetX: 100
   offsetY: 100
 --- !u!154 &539171078
@@ -2122,6 +2122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74feb677d1372842a41f834c319defe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  daySkybox: {fileID: 0}
+  nightSkybox: {fileID: 0}
 --- !u!4 &1257491930
 Transform:
   m_ObjectHideFlags: 0

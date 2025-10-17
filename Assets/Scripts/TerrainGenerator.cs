@@ -6,10 +6,10 @@ using UnityEngine;
 public class TerrainGenerator : MonoBehaviour
 {
     // Terrain dimensions
-    public int width = 256;
-    public int height = 256;
-    public int depth = 15;
-    public float scale = 5f;
+    public int width = 2000;
+    public int height = 2000;
+    public int depth = 50;
+    public float scale = 20f;
     // Offsets for Perlin noise to create random terrain
     public float offsetX = 100f;
     public float offsetY = 100f;
