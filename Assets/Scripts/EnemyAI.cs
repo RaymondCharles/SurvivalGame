@@ -46,12 +46,13 @@ public class EnemyAI : MonoBehaviour
         else ChasePlayer();
     }
 
+
     // --- THIS IS THE SAFETY NET CODE THAT WAS MISSING ---
     // This function runs every frame and forces the enemy to stay on the ground.
     private void LateUpdate()
     {
         if (agent == null) return;
-
+        
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, whatIsGround))
         {
@@ -62,7 +63,11 @@ public class EnemyAI : MonoBehaviour
 
     private void Patroling()
     {
-        if (agent.isOnNavMesh) agent.SetDestination(transform.position);
+        if (agent.isOnNavMesh) 
+        {
+            transform.LookAt(player.position);
+            agent.SetDestination(transform.position);
+        }
     }
 
     private void ChasePlayer()
