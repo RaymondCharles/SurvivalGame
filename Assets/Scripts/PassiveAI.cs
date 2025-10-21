@@ -10,19 +10,15 @@ public class PassiveAI : MonoBehaviour
     public Transform firePoint;
     public LayerMask whatIsGround;
 
-    [Header("AI Stats")]
-    public float health = 100f;
-    public float sightRange = 30f;
-    public float attackRange = 15f;
+    [Header("AI Behaviour")]
+    public float attackRange = 20f;
 
     [Header("Attack Settings")]
-    public float timeBetweenAttacks = 3f;
+    public float timeBetweenAttacks = 1.5f;
     public float projectileSpeed = 60f;
 
-    // --- Private variables ---
     private bool isHostile = false;
-    private bool playerInSightRange, playerInAttackRange;
-    private bool alreadyAttacked;
+    private bool alreadyAttacked = false;
 
     private void Awake()
     {
@@ -31,58 +27,63 @@ public class PassiveAI : MonoBehaviour
 
     private void Update()
     {
-        if (!isHostile || player == null)
+        // If the AI is not hostile...
+        if (!isHostile)
         {
-            // ADDED SAFETY CHECK
-            if (agent.isOnNavMesh)
+            // ...completely disable its NavMeshAgent brain.
+            if (agent.enabled)
             {
-                agent.SetDestination(transform.position);
+                agent.enabled = false;
             }
-            return;
+            return; // And do nothing else.
         }
 
-        playerInSightRange = Vector3.Distance(transform.position, player.position) <= sightRange;
-        playerInAttackRange = Vector3.Distance(transform.position, player.position) <= attackRange;
+        // --- If Hostile ---
+        if (player == null) return;
 
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        else if (playerInSightRange && playerInAttackRange) AttackPlayer();
-    }
+        bool playerInAttackRange = Vector3.Distance(transform.position, player.position) <= attackRange;
 
-    public void TakeDamage(float damage)
-    {
-        isHostile = true;
-        health -= damage;
-        if (health <= 0) Destroy(gameObject);
-    }
-
-    private void ChasePlayer()
-    {
-        // ADDED SAFETY CHECK
-        if (agent.isOnNavMesh)
+        if (playerInAttackRange)
         {
-            agent.SetDestination(player.position);
+            AttackPlayer();
         }
+        else
+        {
+            // If it's hostile but the player is out of range, just look at the player.
+            transform.LookAt(player);
+        }
+    }
+
+    // This is called by the EnemyHealth script when this AI takes damage
+    public void BecomeHostile()
+    {
+        if (isHostile) return; // Only run this once
+
+        isHostile = true;
+        // Turn its brain back on so it can attack.
+        if (agent != null)
+        {
+            agent.enabled = true;
+        }
+        Debug.Log(gameObject.name + " has become hostile!");
     }
 
     private void AttackPlayer()
     {
-        // ADDED SAFETY CHECK
-        if (agent.isOnNavMesh)
-        {
-            agent.SetDestination(transform.position);
-        }
         transform.LookAt(player);
 
         if (!alreadyAttacked)
         {
             GameObject currentProjectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
             Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
-            Vector3 direction = (player.position - firePoint.position).normalized;
-            rb.AddForce(direction * projectileSpeed, ForceMode.Impulse);
+            if (rb != null)
+            {
+                Vector3 direction = (player.position - firePoint.position).normalized;
+                rb.AddForce(direction * projectileSpeed, ForceMode.Impulse);
+            }
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
-
             Destroy(currentProjectile, 5f);
         }
     }

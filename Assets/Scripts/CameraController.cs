@@ -17,6 +17,8 @@ public class CameraController : MonoBehaviour
     public GameObject TPCamera;
     private bool isThirdPerson = false;
     public KeyCode toggleKey = KeyCode.Q; // *** NEW: Reliable key bind for toggling ***
+
+    public GameObject GameManager;
     
 
 
@@ -54,7 +56,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         // 1. Cursor Management for Resuming Control (Click to lock)
-        if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked)
+        if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked && !GameManager.GetComponent<GameManager>().isInventoryOpen)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

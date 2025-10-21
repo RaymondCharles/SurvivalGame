@@ -27,9 +27,6 @@ public class TerrainGenerator : MonoBehaviour
         terrain = GetComponent<Terrain>();
         terrain.terrainData = GenerateTerrain(terrain.terrainData);
 
-        //Generate rocks and trees #HABIB DO THIS HERE
-
-
         //Generate meshes for terrain
         surface.BuildNavMesh();
     }
