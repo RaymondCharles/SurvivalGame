@@ -20,14 +20,24 @@ public class TimeManager : MonoBehaviour
     public string timeOfDay => $"{Hours:D2}:{Minutes:D2}";
     public string currDay => $"Day {Days}";
 
+    public GameManager GM;
+
+    public float dayDurationInSeconds = 120f; // 2 minutes for full 24h in game cycle
+    private float minutesPerSecond;
+
+    void Start()
+    {
+        minutesPerSecond = 1440f / dayDurationInSeconds;
+    }
+
     public void Update()
     {
         // Increments tempSecond by the time passed since the last frame, and if it reaches 1 second, increments minutes - set to 0.005f for faster testing
-        tempSecond += Time.deltaTime;
-        while (tempSecond >= 0.005f)
+        tempSecond += Time.deltaTime * minutesPerSecond;
+        while (tempSecond >= 1f)
         {
             Minutes += 1;
-            tempSecond -= 0.005f;
+            tempSecond -= 1f;
         }
     }
 
@@ -51,10 +61,18 @@ public class TimeManager : MonoBehaviour
         // Handle hour changes (just changing Skybox for now)
         if (hr >= 6 && hr < 18)
         {
+            if (RenderSettings.skybox != daySkybox)
+            {
+                GM.SwitchTime();
+            }
             RenderSettings.skybox = daySkybox;
         }
         else
         {
+            if (RenderSettings.skybox != nightSkybox)
+            {
+                GM.SwitchTime();
+            }
             RenderSettings.skybox = nightSkybox;
         }
     }

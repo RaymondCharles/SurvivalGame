@@ -63,6 +63,9 @@ public class PlayerMovement2 : MonoBehaviour
     CharacterController controller;
     public Vector3 velocityCC;
 
+
+    //Movement variables
+    public bool inventoryOpen = false;
     public float horizontalInput;
     public float verticalInput;
     Vector3 moveDirection;
@@ -100,20 +103,23 @@ public class PlayerMovement2 : MonoBehaviour
 
     private void Update()
     {
-        grounded = controller ? controller.isGrounded : grounded;
-        MyInput();
-        StateHandler();
-
-        // *** FINAL FIX: Agreesive Safety Check to prevent 0 m/s snap on start ***
-        // If the player is giving input but the current speed is very low, snap the speed to walkSpeed.
-        if (CurrentMoveSpeed < 0.1f && (horizontalInput != 0f || verticalInput != 0f) && !isSliding)
+        if (!inventoryOpen)
         {
-            currentSpeed = walkSpeed;
-        }
+            grounded = controller ? controller.isGrounded : grounded;
+            MyInput();
+            StateHandler();
 
-        if (!isSliding)
-        {
-            MovePlayer();
+            // *** FINAL FIX: Agreesive Safety Check to prevent 0 m/s snap on start ***
+            // If the player is giving input but the current speed is very low, snap the speed to walkSpeed.
+            if (CurrentMoveSpeed < 0.1f && (horizontalInput != 0f || verticalInput != 0f) && !isSliding)
+            {
+                currentSpeed = walkSpeed;
+            }
+
+            if (!isSliding)
+            {
+                MovePlayer();
+            }
         }
     }
 
