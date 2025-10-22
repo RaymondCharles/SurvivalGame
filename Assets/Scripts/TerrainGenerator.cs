@@ -9,12 +9,34 @@ public class TerrainGenerator : MonoBehaviour
 {
     public NavMeshSurface surface;
 
-    // Terrain dimensions
-    public int width = 2000;
-    public int height = 2000;
-    public int depth = 50;
-    public float scale = 20f;
-    public int octaves = 3; // Number of layers of Perlin noise
+    // Terrain dimensions - serialized fields with inspector sliders and validated properties
+    [Header("Terrain Dimensions")]
+    [SerializeField, Range(128, 8192), Tooltip("Width (heightmap samples)")]
+    private int width = 2000;
+    [SerializeField, Range(128, 8192), Tooltip("Height (heightmap samples)")]
+    private int height = 2000;
+    [SerializeField, Range(1, 512), Tooltip("Max vertical size")]
+    private int depth = 50;
+    [SerializeField, Range(0.1f, 500f), Tooltip("Noise scale")]
+    private float scale = 20f;
+    [SerializeField, Range(1, 16), Tooltip("Number of Perlin noise octaves")]
+    private int octaves = 3;
+
+    public int Width  { get => width;  set => width  = Mathf.Max(16, value); }
+    public int Height { get => height; set => height = Mathf.Max(16, value); }
+    public int Depth  { get => depth;  set => depth  = Mathf.Clamp(value, 1, 10000); }
+    public float Scale{ get => scale;  set => scale  = Mathf.Clamp(value, 0.0001f, 10000f); }
+    public int Octaves{ get => octaves; set => octaves = Mathf.Clamp(value, 1, 32); }
+
+    // Ensures inspector edits are validated and persisted in the editor
+    private void OnValidate()
+    {
+        width  = Mathf.Max(16, width);
+        height = Mathf.Max(16, height);
+        depth  = Mathf.Clamp(depth, 1, 10000);
+        scale  = Mathf.Clamp(scale, 0.0001f, 10000f);
+        octaves= Mathf.Clamp(octaves, 1, 32);
+    }
     public float persistance = 0.5f; // Range 0-1: Amplitude multiplier for each octave
     public float lacunarity = 2f; // Frequency multiplier for each octave
     // Offsets for Perlin noise to create random terrain
@@ -34,8 +56,6 @@ public class TerrainGenerator : MonoBehaviour
         //Generate meshes for terrain
         surface.BuildNavMesh();
     }
-
-
 
     // Function to generate terrain data based on dimensions
     TerrainData GenerateTerrain(TerrainData terrainData)
