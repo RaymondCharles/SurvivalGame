@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerMovement2 pmScript;
 
     public GameObject Terrain;
-    public GameObject SunflowerNightPrefab;
     [SerializeField] private List<GameObject> enemyDayPrefabs;
     [SerializeField] private List<GameObject> enemyNightPrefabs;
     private int day = 1;
