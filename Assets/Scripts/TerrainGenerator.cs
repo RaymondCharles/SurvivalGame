@@ -2,8 +2,9 @@ using UnityEngine;
 using Unity.AI.Navigation;
 
 //TODO:
-// 1. Add Octaves to create more complex terrain
+// 1. Add Octaves to create more complex terrain DONE
 // 2. Consider if we want to have it generate a full map or more like a chunk system
+// 3. Change all fields to properties with getters and setters including validation where necessary and sliders
 public class TerrainGenerator : MonoBehaviour
 {
     public NavMeshSurface surface;
@@ -13,6 +14,9 @@ public class TerrainGenerator : MonoBehaviour
     public int height = 2000;
     public int depth = 50;
     public float scale = 20f;
+    public int octaves = 3; // Number of layers of Perlin noise
+    public float persistance = 0.5f; // Range 0-1: Amplitude multiplier for each octave
+    public float lacunarity = 2f; // Frequency multiplier for each octave
     // Offsets for Perlin noise to create random terrain
     public float offsetX = 100f;
     public float offsetY = 100f;
@@ -52,19 +56,29 @@ public class TerrainGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                heights[x, y] = CalculateHeight(x, y);
+                float amplitude = 1;
+                float frequency = 1;
+
+                for (int i = 0; i < octaves; i++)
+                {
+                    heights[x, y] += CalculateHeight(x, y, frequency) * amplitude;
+                    // Decrease amplitude and increase frequency for next octave
+                    amplitude *= persistance;
+                    frequency *= lacunarity;
+                }
+                heights[x, y] = Mathf.InverseLerp(-1f, 1f, heights[x, y]); // Normalize to 0-1 range
             }
         }
         return heights;
     }
 
-    float CalculateHeight(int x, int y)
+    float CalculateHeight(int x, int y, float freq)
     {
         // Use Perlin noise to create a height value for the inputted coordinates
-        float xCoord = (float)x / width * scale + offsetX;
-        float yCoord = (float)y / height * scale + offsetY;
+        float xCoord = (float)x / width * scale * freq + offsetX;
+        float yCoord = (float)y / height * scale * freq + offsetY;
 
-        return Mathf.PerlinNoise(xCoord, yCoord);
+        return Mathf.PerlinNoise(xCoord, yCoord) * 2f - 1f;
     }
 
 
