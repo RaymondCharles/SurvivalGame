@@ -45,7 +45,6 @@ public class swordBehaviour : MonoBehaviour
     {
         if ((Time.time - prevAttack >= 2.9))
         {
-            Debug.Log("Reset");
             attackCombo = 0;
             swordAnimator.SetInteger("attackCombo", attackCombo);
         }

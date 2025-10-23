@@ -15,7 +15,7 @@ public class EnemyAI : MonoBehaviour
     // Health logic is now in the separate EnemyHealth.cs script
 
     [Header("AI Stats")]
-    public float sightRange = 30f;
+    private float sightRange = 300f;
     public float rangedAttackRange = 15f;
     public float meleeAttackRange = 3f;
 

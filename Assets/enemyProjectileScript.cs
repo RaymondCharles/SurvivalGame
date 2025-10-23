@@ -12,7 +12,6 @@ public class enemyProjectileScript : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.gameObject.name);
         if (collision.gameObject.layer == LayerMask.NameToLayer(targetLayer))
         {
             //Here is where armor is checked and damage is reduced.

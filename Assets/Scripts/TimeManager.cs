@@ -22,7 +22,7 @@ public class TimeManager : MonoBehaviour
 
     public GameManager GM;
 
-    public float dayDurationInSeconds = 120f; // 2 minutes for full 24h in game cycle
+    public float dayDurationInSeconds = 360f; // 2 minutes for full 24h in game cycle
     private float minutesPerSecond;
 
     void Start()
@@ -57,6 +57,7 @@ public class TimeManager : MonoBehaviour
         {
             Hours = 0;
             Days += 1;
+            GM.day+=1;
         }
         // Handle hour changes (just changing Skybox for now)
         if (hr >= 6 && hr < 18)

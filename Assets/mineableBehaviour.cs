@@ -18,7 +18,6 @@ public class mineableBehaviour : MonoBehaviour
             Rigidbody rb = p.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                Debug.Log("Should be shooting");
                 rb.AddForce(stoneSpawn.forward, ForceMode.Impulse);
             }
         }
