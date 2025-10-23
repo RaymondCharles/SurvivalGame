@@ -1,4 +1,6 @@
 ﻿using System;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -12,20 +14,18 @@ public class InventoryUi : MonoBehaviour
     public InvPlanelUse invUsePanel;
     public PlayerStatss playerStats;
 
+    public ItemUi selectedItemUi;
+    public string currentItemId;
+    public Item currentItem;
+
+
     [SerializeField]
     SerializedDictionary<string, GameObject> inventoryUI = new();
 
-    // Store the current selected item's id and data
-    private string currentItemId;
-    private Item currentItem;
-
     public void AddUIItem(string inventoryId, Item item)
     {
-        var itemUI = Instantiate(uiItemPrefab).GetComponent<ItemUi>();
-        itemUI.transform.SetParent(uiInventoryParent, false);
+        var itemUI = Instantiate(uiItemPrefab, uiInventoryParent).GetComponent<ItemUi>();
         inventoryUI.Add(inventoryId, itemUI.gameObject);
-
-        // Pass the method OnItemSelected as the callback instead of a lambda
         itemUI.Initialize(inventoryId, item, OnItemSelected);
     }
 
@@ -34,6 +34,14 @@ public class InventoryUi : MonoBehaviour
     {
         if (!inventory.TryGetItem(inventoryId, out var item))
             return;
+
+        if (selectedItemUi != null)
+        {
+            selectedItemUi.SetSelected(false);
+        }
+
+        selectedItemUi = inventoryUI[inventoryId].GetComponent<ItemUi>();
+        selectedItemUi.SetSelected(true);
 
         currentItemId = inventoryId;
         currentItem = item;
@@ -50,12 +58,31 @@ public class InventoryUi : MonoBehaviour
         }
     }
 
+    public void UpdateUIItemCount(string inventoryId, int count)
+    {
+        if (inventoryUI.TryGetValue(inventoryId, out var itemUiobj))
+        {
+            var itemUi = itemUiobj.GetComponent<ItemUi>();
+            itemUi.SetCount(count);
+        }
+
+
+    }
+
 
 
     // Called when user confirms dropping the item
     private void OnDropConfirmed()
     {
         inventory.DropItem(currentItemId);
+
+        if (selectedItemUi != null)
+        {
+            selectedItemUi.SetSelected(false);
+            selectedItemUi = null;
+        }
+        currentItem = null;
+        currentItemId = null;
     }
 
     // Called when user confirms using the item
