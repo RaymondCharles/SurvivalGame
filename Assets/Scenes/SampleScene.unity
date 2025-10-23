@@ -1272,6 +1272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 160981016}
   player: {fileID: 56935149}
+  playerStats: {fileID: 0}
   projectilePrefab: {fileID: 1689561605}
   firePoint: {fileID: 986606378}
   whatIsGround:
@@ -1283,6 +1284,8 @@ MonoBehaviour:
   timeBetweenAttacks: 0.5
   projectileSpeed: 60
   projectileDamage: 5
+  meleeDamage: 10
+  meleeBlocked: 0
 --- !u!195 &160981016
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2292,6 +2295,7 @@ MonoBehaviour:
   environmentPrefabs:
   - {fileID: 2965305511729431591, guid: 6b2343d3b95ed3748b90c9e05557a4a2, type: 3}
   player: {fileID: 56935149}
+  playerStats: {fileID: 56935156}
   timeOfDay: 0
 --- !u!4 &357655314
 Transform:
@@ -2855,7 +2859,7 @@ GameObject:
   - component: {fileID: 494934707}
   m_Layer: 0
   m_Name: Sword
-  m_TagString: Untagged
+  m_TagString: Sword
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3226,6 +3230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 544471640}
   player: {fileID: 56935149}
+  playerStats: {fileID: 0}
   projectilePrefab: {fileID: 1689561605}
   firePoint: {fileID: 1866554126}
   whatIsGround:
@@ -3237,6 +3242,8 @@ MonoBehaviour:
   timeBetweenAttacks: 0.5
   projectileSpeed: 60
   projectileDamage: 5
+  meleeDamage: 10
+  meleeBlocked: 0
 --- !u!195 &544471640
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -4340,6 +4347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 822190028}
   player: {fileID: 56935149}
+  playerStats: {fileID: 0}
   projectilePrefab: {fileID: 1689561605}
   firePoint: {fileID: 1353069860}
   whatIsGround:
@@ -4351,6 +4359,8 @@ MonoBehaviour:
   timeBetweenAttacks: 0.5
   projectileSpeed: 60
   projectileDamage: 5
+  meleeDamage: 10
+  meleeBlocked: 0
 --- !u!195 &822190028
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -6808,7 +6818,7 @@ GameObject:
   - component: {fileID: 1347326013}
   m_Layer: 0
   m_Name: Shield
-  m_TagString: Untagged
+  m_TagString: Shield
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6843,7 +6853,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -7666,6 +7676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1601769594}
   player: {fileID: 56935149}
+  playerStats: {fileID: 0}
   projectilePrefab: {fileID: 1689561605}
   firePoint: {fileID: 1521075134}
   whatIsGround:
@@ -7677,6 +7688,8 @@ MonoBehaviour:
   timeBetweenAttacks: 0.5
   projectileSpeed: 60
   projectileDamage: 5
+  meleeDamage: 10
+  meleeBlocked: 0
 --- !u!195 &1601769594
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -10065,7 +10078,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2345251118307689590}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2081971, y: 0.000000008414668, z: -0.0000000017911593, w: 0.9780869}
+  m_LocalRotation: {x: 0.2081971, y: -0.000000008414667, z: 0.0000000017911591, w: 0.9780869}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -10629,7 +10642,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7917931836949256293}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.24192211, y: 0.000000018665883, z: -0.0000000046539324, w: 0.97029567}
+  m_LocalRotation: {x: 0.24192211, y: -0.000000018665885, z: 0.000000004653933, w: 0.97029567}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

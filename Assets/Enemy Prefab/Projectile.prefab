@@ -146,3 +146,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27d956c2add7ab349849a3f507b29562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Damage: 0
+  targetLayer: whatIsPlayer

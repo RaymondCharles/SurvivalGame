@@ -6,6 +6,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Required Components")]
     public NavMeshAgent agent;
     public Transform player;
+    public PlayerStats playerStats;
     public GameObject projectilePrefab;
     public Transform firePoint;
     public LayerMask whatIsGround;
@@ -22,6 +23,8 @@ public class EnemyAI : MonoBehaviour
     public float timeBetweenAttacks = 1.5f;
     public float projectileSpeed = 60f;
     public int projectileDamage = 5;
+    public int meleeDamage = 10;
+    public bool meleeBlocked = false;
 
     private Animator animator;
     private bool playerInSightRange, playerInRangedRange, playerInMeleeRange;
@@ -85,6 +88,14 @@ public class EnemyAI : MonoBehaviour
         {
             if (animator != null) animator.SetTrigger("Punch");
             alreadyAttacked = true;
+            if (!meleeBlocked)
+            {
+                playerStats.TakeDamage(meleeDamage);
+            }
+            else
+            {
+                Debug.Log("Blocked!");
+            }
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }

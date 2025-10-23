@@ -16,6 +16,7 @@ public class PassiveAI : MonoBehaviour
     [Header("Attack Settings")]
     public float timeBetweenAttacks = 1.5f;
     public float projectileSpeed = 60f;
+    public int projectileDamage = 5;
 
     private bool isHostile = false;
     private bool alreadyAttacked = false;
@@ -75,6 +76,7 @@ public class PassiveAI : MonoBehaviour
         if (!alreadyAttacked)
         {
             GameObject currentProjectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+            currentProjectile.GetComponent<enemyProjectileScript>().Damage = projectileDamage;
             Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
             if (rb != null)
             {

@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
 
     //Parameters for Enemy AI Script
     public Transform player;
+    public PlayerStats playerStats;
 
     public enum dayState { day, night }
     public dayState timeOfDay;
@@ -105,6 +106,7 @@ public class GameManager : MonoBehaviour
             else
             {
                 objectSpawn.GetComponent<EnemyAI>().player = player;
+                objectSpawn.GetComponent<EnemyAI>().playerStats = playerStats;
             }
         }
         return objectSpawn;

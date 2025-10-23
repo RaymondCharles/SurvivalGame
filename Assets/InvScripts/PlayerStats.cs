@@ -28,7 +28,9 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+        Debug.Log("Took Damage!");
         hp -= amount;
+        Debug.Log("New hp " + hp);
     }
 
     public void ReduceHunger(int amount)

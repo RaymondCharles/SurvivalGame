@@ -70,7 +70,6 @@ public class swordBehaviour : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            Debug.Log("Colliding with enemy");
             GameObject enemy = other.gameObject;
             if (!canAttack && !enemiesHit.Contains(enemy))
             {

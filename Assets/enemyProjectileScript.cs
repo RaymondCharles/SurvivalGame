@@ -12,6 +12,7 @@ public class enemyProjectileScript : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.name);
         if (collision.gameObject.layer == LayerMask.NameToLayer(targetLayer))
         {
             //Here is where armor is checked and damage is reduced.
@@ -19,16 +20,20 @@ public class enemyProjectileScript : MonoBehaviour
 
 
             //Script variable would be used here instead of only playerStats so that this script isn't just for enemies but can be used universally.
-            collision.gameObject.GetComponent<PlayerStats>().TakeDamage(Damage);
-            Debug.Log("Player Hit! New HP is " + collision.gameObject.GetComponent<PlayerStats>().hp);
+            collision.gameObject.GetComponentInParent<PlayerStats>().TakeDamage(Damage);
+            Debug.Log("Player Hit! New HP is " + collision.gameObject.GetComponentInParent<PlayerStats>().hp);
         }
-        /* If want to reduce damage taken rather than fully block.
-        else if (collision.gameObject.CompareTag("Shield"))
-        {
-
-        }*/
-
-        Debug.Log(collision.gameObject.name);
         Destroy(gameObject);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Shield"))
+        {
+            if (other.gameObject.GetComponent<shieldBehaviour>().isBlocking)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }

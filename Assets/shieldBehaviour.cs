@@ -22,4 +22,41 @@ public class shieldBehaviour : MonoBehaviour
         isBlocking = false;
         shieldAnimator.SetBool("Block", isBlocking);
     }
+
+
+
+    public void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            if  (isBlocking)
+            {
+                Debug.Log("Collided with enemy, BLOCKING");
+                if (other.gameObject.GetComponent<EnemyAI>() != null)
+                {
+                    other.gameObject.GetComponent<EnemyAI>().meleeBlocked = true;
+                }
+            }
+            else
+            {
+                Debug.Log("Collided with enemy, BLOCKING");
+                if (other.gameObject.GetComponent<EnemyAI>() != null)
+                {
+                    other.gameObject.GetComponent<EnemyAI>().meleeBlocked = false;
+                }
+            }
+        }
+    }
+    
+    public void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            Debug.Log("Collided with enemy, UNBLOCKING");
+            if (other.gameObject.GetComponent<EnemyAI>() != null)
+            {
+                other.gameObject.GetComponent<EnemyAI>().meleeBlocked = false;
+            }
+        }
+    }
 }
