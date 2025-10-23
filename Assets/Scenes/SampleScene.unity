@@ -274,10 +274,10 @@ GameObject:
   - component: {fileID: 56935152}
   - component: {fileID: 56935154}
   - component: {fileID: 56935155}
-  - component: {fileID: 56935156}
   - component: {fileID: 56935157}
   - component: {fileID: 56935158}
   - component: {fileID: 56935161}
+  - component: {fileID: 56935162}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -463,22 +463,6 @@ MonoBehaviour:
   attackDamage: 10
   attackDistance: 100
   playerCamera: {fileID: 8526149214545222403}
---- !u!114 &56935156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 56935148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0a9b9a74ee1b8d49b26eba6d5ac81d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp: 0
-  hunger: 0
-  hpText: {fileID: 621428690}
-  hungerText: {fileID: 1815825073}
 --- !u!114 &56935157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -675,6 +659,22 @@ MonoBehaviour:
   playerArmor: {fileID: 0}
   swordScript: {fileID: 494934707}
   shieldScript: {fileID: 1347326013}
+--- !u!114 &56935162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56935148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0a9b9a74ee1b8d49b26eba6d5ac81d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 0
+  hunger: 0
+  hpText: {fileID: 621428690}
+  hungerText: {fileID: 1815825073}
 --- !u!1 &60016445
 GameObject:
   m_ObjectHideFlags: 0
@@ -1959,8 +1959,9 @@ MonoBehaviour:
   - {fileID: 1729192208607200507, guid: 7a2b0d896eaaf5c468c67d0d1dbfee05, type: 3}
   snowEnvPrefabs:
   - {fileID: 2965305511729431591, guid: 6b2343d3b95ed3748b90c9e05557a4a2, type: 3}
+  day: 0
   player: {fileID: 56935149}
-  playerStats: {fileID: 56935156}
+  playerStats: {fileID: 0}
   timeOfDay: 0
 --- !u!4 &357655314
 Transform:
@@ -2690,7 +2691,7 @@ PrefabInstance:
         type: 3}
       propertyPath: playerStats
       value: 
-      objectReference: {fileID: 56935156}
+      objectReference: {fileID: 0}
     - target: {fileID: 842243565860271969, guid: c0aab0440b3de8c42b6c0bf609dcdfaa,
         type: 3}
       propertyPath: invDropPanel
@@ -3413,7 +3414,6 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  sightRange: 25
   rangedAttackRange: 15
   meleeAttackRange: 3
   timeBetweenAttacks: 0.5
@@ -5544,10 +5544,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   surface: {fileID: 868058836}
-  width: 2000
-  height: 2000
-  depth: 50
-  scale: 20
+  biomes: 0000000001000000
+  persistance: 0.5
+  lacunarity: 2
   offsetX: 100
   offsetY: 100
 --- !u!154 &1440495171
@@ -6028,7 +6027,6 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  sightRange: 25
   rangedAttackRange: 15
   meleeAttackRange: 3
   timeBetweenAttacks: 0.5
@@ -7849,7 +7847,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2345251118307689590}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2081971, y: -0.000000008414667, z: 0.0000000017911591, w: 0.9780869}
+  m_LocalRotation: {x: 0.2081971, y: 0.000000008414668, z: -0.0000000017911593, w: 0.9780869}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

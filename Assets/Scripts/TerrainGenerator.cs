@@ -253,13 +253,18 @@ public class TerrainGenerator : MonoBehaviour
         }
 
         // If we didn't find a matching biome, return zero (or handle as needed)
-        if (biomeMap[randomX, randomZ] != biome) return Vector3.zero;
+        if (biomeMap[randomX, randomZ] != biome)
+        {
+            Debug.Log("Failed to find matching biome");
+            return Vector3.zero;
+        }
 
         // Get height (Y) at that point
         float y = terrain.SampleHeight(new Vector3((float)randomX + terrainPosX, 0f, (float)randomZ + terrainPosZ));
 
         // Convert to world coordinates
         Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y, (float)randomZ + terrainPosZ);
+        Debug.Log("Found point at " + worldPos);
         return worldPos;
     }
 
