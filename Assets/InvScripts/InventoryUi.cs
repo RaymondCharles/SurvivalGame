@@ -1,76 +1,97 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Rendering;
+using UnityEngine.Rendering; // Keep if SerializedDictionary needs it
 
 public class InventoryUi : MonoBehaviour
 {
     [Header("References")]
     public GameObject uiItemPrefab;
-    public Inventory inventory;
-    public Transform uiInventoryParent;
-    public InvDropPanel invDropPanel;
-    public InvPlanelUse invUsePanel;
-    public PlayerStatss playerStats;
+    public Inventory inventory; // Reference to the main Inventory script
+    public Transform uiInventoryParent; // The grid/layout group for UI items
+    public InvDropPanel invDropPanel;   // Your panel with the "Drop" button
+    public InvPlanelUse invUsePanel;    // Your panel with the "Use" button
 
     [SerializeField]
-    SerializedDictionary<string, GameObject> inventoryUI = new();
+    SerializedDictionary<string, GameObject> inventoryUI = new(); // Tracks the UI GameObjects
 
-    // Store the current selected item's id and data
-    private string currentItemId;
-    private Item currentItem;
+    private string currentSelectedItemId;
 
     public void AddUIItem(string inventoryId, Item item)
     {
-        var itemUI = Instantiate(uiItemPrefab).GetComponent<ItemUi>();
-        itemUI.transform.SetParent(uiInventoryParent, false);
-        inventoryUI.Add(inventoryId, itemUI.gameObject);
-
-        // Pass the method OnItemSelected as the callback instead of a lambda
-        itemUI.Initialize(inventoryId, item, OnItemSelected);
-    }
-
-    // Called when an item UI is clicked/selected
-    private void OnItemSelected(string inventoryId)
-    {
-        if (!inventory.TryGetItem(inventoryId, out var item))
-            return;
-
-        currentItemId = inventoryId;
-        currentItem = item;
-
-        invDropPanel.Show(OnDropConfirmed);
-
-        if (item.isConsumable)
+        if (uiItemPrefab == null || uiInventoryParent == null)
         {
-            invUsePanel.Show(OnUseConfirmed);
+            Debug.LogError("UI Prefab or Parent not set in InventoryUi!");
+            return;
+        }
+
+        var itemUIInstance = Instantiate(uiItemPrefab, uiInventoryParent);
+        var itemUIScript = itemUIInstance.GetComponent<ItemUi>();
+
+        if (itemUIScript != null)
+        {
+            inventoryUI.Add(inventoryId, itemUIInstance);
+            itemUIScript.Initialize(inventoryId, item, OnItemSelected);
         }
         else
         {
-            invUsePanel.gameObject.SetActive(false);
+            Debug.LogError("uiItemPrefab is missing the ItemUi script!");
+            Destroy(itemUIInstance);
         }
     }
 
-
-
-    // Called when user confirms dropping the item
-    private void OnDropConfirmed()
+    private void OnItemSelected(string inventoryId)
     {
-        inventory.DropItem(currentItemId);
+        if (inventory == null || !inventory.TryGetItem(inventoryId, out Item selectedItem))
+        {
+            Debug.LogError($"Could not find item with ID {inventoryId} or Inventory reference is missing.");
+            HideActionPanels(); // Hide panels if item is invalid
+            return;
+        }
+
+        currentSelectedItemId = inventoryId;
+
+        if (invDropPanel != null)
+        {
+            if (selectedItem.canBeDropped) invDropPanel.Show(OnDropConfirmed);
+            else invDropPanel.gameObject.SetActive(false);
+        }
+
+        if (invUsePanel != null)
+        {
+            if (selectedItem.isConsumable) invUsePanel.Show(OnUseConfirmed);
+            else invUsePanel.gameObject.SetActive(false);
+        }
     }
 
-    // Called when user confirms using the item
+    private void OnDropConfirmed()
+    {
+        if (inventory != null) inventory.DropItem(currentSelectedItemId);
+        HideActionPanels();
+    }
+
     private void OnUseConfirmed()
     {
-        playerStats.IncreaseStats(currentItem.hpRestoreAmount, currentItem.hungerRestoreAmount);
-        inventory.RemoveItemFromInventory(currentItemId);
+        if (inventory != null) inventory.UseItem(currentSelectedItemId);
+        HideActionPanels();
     }
 
     public void RemoveUIItem(string inventoryId)
     {
-        if (inventoryUI.TryGetValue(inventoryId, out var itemUI))
+        if (inventoryUI.TryGetValue(inventoryId, out var itemUIGameObject))
         {
             inventoryUI.Remove(inventoryId);
-            Destroy(itemUI);
+            Destroy(itemUIGameObject);
         }
+        if (inventoryId == currentSelectedItemId)
+        {
+            HideActionPanels();
+        }
+    }
+
+    private void HideActionPanels()
+    {
+        if (invDropPanel != null) invDropPanel.gameObject.SetActive(false);
+        if (invUsePanel != null) invUsePanel.gameObject.SetActive(false);
+        currentSelectedItemId = null;
     }
 }

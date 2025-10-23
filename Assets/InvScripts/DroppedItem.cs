@@ -1,60 +1,28 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections; // Needed for IEnumerator
 
 public class DroppedItem : MonoBehaviour
 {
-    public bool autoStart;
-    public float enabledPickupDelay = 3.0f;
-    public Item item;
-    public bool pickedUp = false;
+    public Item item; // Assign the ScriptableObject (Food or Potion) here in the prefab's Inspector
+    [HideInInspector] public bool pickedUp = false;
+    public float enabledPickupDelay = 0.5f; // Short delay before pickup is allowed
 
-    // Start is called before the first frame update
-    void Start()
+    // Called by the Inventory script when an item is dropped
+    public void Initialize(Item itemToDrop)
     {
-        if (autoStart && item != null)
-        {
-            Initialize(item);
+        item = itemToDrop;
+        // Optional: Update visual appearance based on item
+        // GetComponentInChildren<Renderer>().material = item.pickupMaterial; // Example
 
-        }
-    }
-
-    // Update is called once per frame
-    //public void Initialize(Item item)
-    //{
-    //    this.item = item;
-    //    var droppedItem = Instantiate(item.prefab, transform);
-    //    Debug.Log("Spawned prefab: " + droppedItem.name);
-
-    //    droppedItem.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-    //    StartCoroutine(EnablePickup(enabledPickupDelay));
-    //}
-
-    public void Initialize(Item item)
-    {
-        this.item = item;
-
-        if (item.prefab == null)
-        {
-            Debug.LogError($"Item {item.name} has no prefab assigned!");
-            return;
-        }
-
-        var droppedItem = Instantiate(item.prefab, transform);
-
-        //Debug.Log($"Spawned prefab: {droppedItem.name} at {droppedItem.transform.position}");
-
-        droppedItem.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        // Start delay before pickup is possible
+        GetComponent<Collider>().enabled = false; // Disable collider initially
         StartCoroutine(EnablePickup(enabledPickupDelay));
     }
 
     IEnumerator EnablePickup(float delay)
     {
         yield return new WaitForSeconds(delay);
-        GetComponent<Collider>().enabled = true;
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = true; // Enable collider after delay
     }
-
-
-
 }
