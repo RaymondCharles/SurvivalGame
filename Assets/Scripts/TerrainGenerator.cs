@@ -12,15 +12,15 @@ public class TerrainGenerator : MonoBehaviour
 
     // Terrain dimensions - serialized fields with inspector sliders and validated properties
     [Header("Terrain Dimensions")]
-    [SerializeField, Range(128, 8192), Tooltip("Width (heightmap samples)")]
+    //[SerializeField, Range(128, 8192), Tooltip("Width (heightmap samples)")]
     private int width = 2000;
-    [SerializeField, Range(128, 8192), Tooltip("Height (heightmap samples)")]
+    //[SerializeField, Range(128, 8192), Tooltip("Height (heightmap samples)")]
     private int height = 2000;
-    [SerializeField, Range(1, 512), Tooltip("Max vertical size")]
+    //[SerializeField, Range(1, 512), Tooltip("Max vertical size")]
     private int depth = 70;
-    [SerializeField, Range(0.1f, 500f), Tooltip("Noise scale")]
-    private float scale = 40f;
-    [SerializeField, Range(1, 16), Tooltip("Number of Perlin noise octaves")]
+    //[SerializeField, Range(0.1f, 500f), Tooltip("Noise scale")]
+    private float scale = 5f;
+    //[SerializeField, Range(1, 16), Tooltip("Number of Perlin noise octaves")]
     private int octaves = 3;
 
     // Voronoi diagram fields
@@ -112,14 +112,17 @@ public class TerrainGenerator : MonoBehaviour
                 if (currBiome == 0) // Grassland biome
                 {
                     baseAmplitude = 2f;
-                    baseFrequency = 1f;
+                    baseFrequency = 4f;
+                    lacunarity = 0.25f;
+                    depth = 100;
                     // keep usedOctaves as configured
                 }
                 else if (currBiome == 1) // Desert biome
                 {
                     baseAmplitude = 0.5f; // Lower amplitude for flatter terrain
-                    baseFrequency = 2f;   // Higher frequency for more variation
-                    usedOctaves = 2;      // local override for desert
+                    baseFrequency = 2.5f;   // Higher frequency for more variation
+                    usedOctaves = 4;      // local override for desert
+                    depth = 60;
                 }
                 
                 /***
