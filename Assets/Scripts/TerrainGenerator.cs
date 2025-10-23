@@ -97,28 +97,77 @@ public class TerrainGenerator : MonoBehaviour
         float minHeight = float.MaxValue;
         float maxHeight = float.MinValue;
 
+        int blendRange = 40; // Number of coords over which to blend between biomes
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
+                int currBiome = biomeMap[x, y];
                 // Use local variables so we don't mutate class fields every pixel
                 float baseAmplitude = 1f;
                 float baseFrequency = 1f;
                 int usedOctaves = Octaves;
 
-                if (biomeMap[x, y] == 0) // Grassland biome
+                if (currBiome == 0) // Grassland biome
                 {
                     baseAmplitude = 2f;
                     baseFrequency = 1f;
                     // keep usedOctaves as configured
                 }
-                else if (biomeMap[x, y] == 1) // Desert biome
+                else if (currBiome == 1) // Desert biome
                 {
                     baseAmplitude = 0.5f; // Lower amplitude for flatter terrain
                     baseFrequency = 2f;   // Higher frequency for more variation
                     usedOctaves = 2;      // local override for desert
                 }
+                
+                /***
+                // Blend with neighboring biomes within blendRange - expanded to use smooth interpolation
+                float nearestDist = blendRange + 1f;
+                int neighborBiome = currBiome;
 
+                for (int dx = -blendRange; dx <= blendRange; dx++)
+                {
+                    for (int dy = -blendRange; dy <= blendRange; dy++)
+                    {
+                        int nx = x + dx;
+                        int ny = y + dy;
+                        if (nx < 0 || ny < 0 || nx >= width || ny >= height)
+                            continue;
+
+                        int neighbor = biomeMap[nx, ny];
+                        if (neighbor != currBiome)
+                        {
+                            float dist = Mathf.Sqrt(dx * dx + dy * dy);
+                            if (dist < nearestDist)
+                            {
+                                nearestDist = dist;
+                                neighborBiome = neighbor;
+                            }
+                        }
+                    }
+                }
+
+                // If near another biome, compute a smooth blend factor (1 = at boundary, 0 = far)
+                if (nearestDist <= blendRange && neighborBiome != currBiome)
+                {
+                    float rawBlend = 1f - Mathf.Clamp01(nearestDist / (float)blendRange);
+                    float smooth = Mathf.SmoothStep(0f, 1f, rawBlend);
+
+                    // Neighbor biome properties
+                    float otherAmp = (neighborBiome == 0) ? 2f : 0.5f;
+                    float otherFreq = (neighborBiome == 0) ? 1f : 2f;
+                    int otherOctaves = (neighborBiome == 0) ? Octaves : 2;
+
+                    // Blend amplitudes, frequencies and octave count smoothly toward neighbor values near the boundary
+                    baseAmplitude = Mathf.Lerp(baseAmplitude, otherAmp, smooth);
+                    baseFrequency = Mathf.Lerp(baseFrequency, otherFreq, smooth);
+                    usedOctaves = Mathf.Max(1, Mathf.RoundToInt(Mathf.Lerp(usedOctaves, otherOctaves, smooth)));
+                }
+                
+                ***/
+                // Generate height using Perlin noise with multiple octaves
                 float noiseHeight = 0f;
                 float amplitude = baseAmplitude;
                 float frequency = baseFrequency;
@@ -136,8 +185,8 @@ public class TerrainGenerator : MonoBehaviour
                 if (noiseHeight < minHeight) minHeight = noiseHeight;
                 if (noiseHeight > maxHeight) maxHeight = noiseHeight;
             }
+        
         }
-
         // Normalize using actual min/max to avoid clamped flat areas at extremes
         if (maxHeight > minHeight)
         {
@@ -273,10 +322,10 @@ public class TerrainGenerator : MonoBehaviour
                  
                 // Calculate the normal of the terrain 
                 Vector3 normal = terrainData.GetInterpolatedNormal(y_01,x_01);
-      
+
                 // Calculate the steepness of the terrain
-                float steepness = terrainData.GetSteepness(y_01,x_01);
-                 
+                float steepness = terrainData.GetSteepness(y_01, x_01);
+                
                 // Setup an array to record the mix of texture weights at this point
                 float[] splatWeights = new float[terrainData.alphamapLayers];
               
@@ -304,21 +353,6 @@ public class TerrainGenerator : MonoBehaviour
                     splatWeights[0] = 0.5f;
                     splatWeights[1] = Mathf.Clamp01(terrainData.heightmapResolution - height);
                 }
-                /***
-                // Texture[0] has constant influence
-                splatWeights[0] = 0.5f;
-                 
-                // Texture[1] is stronger at lower altitudes
-                splatWeights[1] = Mathf.Clamp01((terrainData.heightmapHeight - height));
-                 
-                // Texture[2] stronger on flatter terrain
-                // Note "steepness" is unbounded, so we "normalise" it by dividing by the extent of heightmap height and scale factor
-                // Subtract result from 1.0 to give greater weighting to flat surfaces
-                splatWeights[2] = 1.0f - Mathf.Clamp01(steepness*steepness/(terrainData.heightmapHeight/5.0f));
-                 
-                // Texture[3] increases with height but only on surfaces facing positive Z axis 
-                splatWeights[3] = height * Mathf.Clamp01(normal.z);
-                ***/
                  
                 // Sum of all textures weights must add to 1, so calculate normalization factor from sum of weights
                 float z = splatWeights.Sum();
@@ -335,7 +369,7 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
       
-        // Finally assign the new splatmap to the terrainData:
+        // assign the new splatmap to the terrainData:
         terrainData.SetAlphamaps(0, 0, splatmapData);
     }
 }
