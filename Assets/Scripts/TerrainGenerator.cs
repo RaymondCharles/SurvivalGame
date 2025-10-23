@@ -57,9 +57,12 @@ public class TerrainGenerator : MonoBehaviour
     public float offsetX = 100f;
     public float offsetY = 100f;
     private Terrain terrain;
+    public int[,] biomeMap;
 
     public void StartWorld()
     {
+        // Generate Voronoi diagram for biome map
+        biomeMap = GenerateVDiagram();
         // Set random offsets for Perlin noise
         offsetX = Random.Range(0f, 9999f);
         offsetY = Random.Range(0f, 9999f);
@@ -69,7 +72,6 @@ public class TerrainGenerator : MonoBehaviour
 
         //Generate meshes for terrain
         surface.BuildNavMesh();
-
     }
 
     // Function to generate terrain data based on dimensions
@@ -78,9 +80,7 @@ public class TerrainGenerator : MonoBehaviour
         terrainData.heightmapResolution = width + 1;
         terrainData.size = new Vector3(width, depth, height);
 
-
         // Set heights using a height map
-        int[,] biomeMap = GenerateVDiagram();
         terrainData.SetHeights(0, 0, GenerateHeights(biomeMap));
         // Assign Splat Map based on biome
         AssignSplatMap(terrain, terrain.terrainData, biomeMap);
@@ -225,20 +225,41 @@ public class TerrainGenerator : MonoBehaviour
         return Mathf.PerlinNoise(xCoord, yCoord) * 2f - 1f;
     }
 
-    public Vector3 GetRandomPointOnTerrain()
+    public Vector3 GetRandomPointOnTerrain(int biome)
     {
+        // Ensure terrain and biomeMap are available
+        terrain ??= GetComponent<Terrain>();
+        if (terrain == null || biomeMap == null) return Vector3.zero;
+
+        // Get terrain position and dimensions
         float terrainPosX = terrain.transform.position.x;
         float terrainPosZ = terrain.transform.position.z;
 
-        // Pick a random point in terrain space
-        float randomX = Random.Range(0, width);
-        float randomZ = Random.Range(0, height);
+        // Pick initial random point
+        int randomX = Random.Range(0, Width);
+        int randomZ = Random.Range(0, Height);
+
+        // Safety cap on attempts to avoid infinite loops
+        int attempts = 0;
+        int maxAttempts = 10; // currently set low for testing purposes, would need to be some multiple of biome types
+
+        // Find a random position that matches the requested biome (with a safety cap on attempts)
+        while (biomeMap[randomX, randomZ] != biome && attempts++ < maxAttempts)
+        {
+            Debug.Log(randomX + "," + randomZ + " is biome " + biomeMap[randomX, randomZ] + ", looking for " + biome);
+            // Pick a random point in terrain space
+            randomX = Random.Range(0, Width);
+            randomZ = Random.Range(0, Height);
+        }
+
+        // If we didn't find a matching biome, return zero (or handle as needed)
+        if (biomeMap[randomX, randomZ] != biome) return Vector3.zero;
 
         // Get height (Y) at that point
-        float y = terrain.SampleHeight(new Vector3(randomX + terrainPosX, 0, randomZ + terrainPosZ));
+        float y = terrain.SampleHeight(new Vector3((float)randomX + terrainPosX, 0f, (float)randomZ + terrainPosZ));
 
         // Convert to world coordinates
-        Vector3 worldPos = new Vector3(randomX + terrainPosX, y, randomZ + terrainPosZ);
+        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y, (float)randomZ + terrainPosZ);
         return worldPos;
     }
 
