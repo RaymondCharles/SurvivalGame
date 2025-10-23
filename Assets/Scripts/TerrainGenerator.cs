@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.AI.Navigation;
+using System.Linq; // used for Sum of array
 
 //TODO:
 // 1. Add Octaves to create more complex terrain DONE
@@ -16,16 +17,15 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField, Range(128, 8192), Tooltip("Height (heightmap samples)")]
     private int height = 2000;
     [SerializeField, Range(1, 512), Tooltip("Max vertical size")]
-    private int depth = 50;
+    private int depth = 70;
     [SerializeField, Range(0.1f, 500f), Tooltip("Noise scale")]
-    private float scale = 20f;
+    private float scale = 40f;
     [SerializeField, Range(1, 16), Tooltip("Number of Perlin noise octaves")]
     private int octaves = 3;
 
     // Voronoi diagram fields
     [SerializeField] private int[] biomes;
-    [SerializeField] private int numOfCells = 10;
-    private int imgSize;
+    [SerializeField] private int numOfCells = 2;
     private int pixelsPerCell;
     private Vector2Int[,] pointsPosArray; // Array to hold cell point positions
     private int[,] cellBiomesArray; // Array to hold cell biomes
@@ -69,6 +69,7 @@ public class TerrainGenerator : MonoBehaviour
 
         //Generate meshes for terrain
         surface.BuildNavMesh();
+
     }
 
     // Function to generate terrain data based on dimensions
@@ -79,34 +80,87 @@ public class TerrainGenerator : MonoBehaviour
 
 
         // Set heights using a height map
-
-        terrainData.SetHeights(0, 0, GenerateHeights(GenerateVDiagram()));
+        int[,] biomeMap = GenerateVDiagram();
+        terrainData.SetHeights(0, 0, GenerateHeights(biomeMap));
+        // Assign Splat Map based on biome
+        AssignSplatMap(terrain, terrain.terrainData, biomeMap);
 
         return terrainData;
     }
 
     float[,] GenerateHeights(int[,] biomeMap)
     {
-        // Generate a simple height map using Perlin noise
+        // Generate a simple height map using Perlin noise and normalize it based on actual min/max values
         float[,] heights = new float[width, height];
+
+        // Track min and max so we can normalize the whole map afterwards
+        float minHeight = float.MaxValue;
+        float maxHeight = float.MinValue;
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                float amplitude = 1;
-                float frequency = 1;
+                // Use local variables so we don't mutate class fields every pixel
+                float baseAmplitude = 1f;
+                float baseFrequency = 1f;
+                int usedOctaves = Octaves;
 
-                for (int i = 0; i < octaves; i++)
+                if (biomeMap[x, y] == 0) // Grassland biome
                 {
-                    heights[x, y] += CalculateHeight(x, y, frequency) * amplitude;
+                    baseAmplitude = 2f;
+                    baseFrequency = 1f;
+                    // keep usedOctaves as configured
+                }
+                else if (biomeMap[x, y] == 1) // Desert biome
+                {
+                    baseAmplitude = 0.5f; // Lower amplitude for flatter terrain
+                    baseFrequency = 2f;   // Higher frequency for more variation
+                    usedOctaves = 2;      // local override for desert
+                }
+
+                float noiseHeight = 0f;
+                float amplitude = baseAmplitude;
+                float frequency = baseFrequency;
+
+                for (int i = 0; i < usedOctaves; i++)
+                {
+                    noiseHeight += CalculateHeight(x, y, frequency) * amplitude;
                     // Decrease amplitude and increase frequency for next octave
                     amplitude *= persistance;
                     frequency *= lacunarity;
                 }
-                heights[x, y] += biomeMap[x, y]; // Add exaggerated height offset based on biome type
-                heights[x, y] = Mathf.InverseLerp(-1f, 1f, heights[x, y]); // Normalize to 0-1 range
+
+                heights[x, y] = noiseHeight;
+
+                if (noiseHeight < minHeight) minHeight = noiseHeight;
+                if (noiseHeight > maxHeight) maxHeight = noiseHeight;
             }
         }
+
+        // Normalize using actual min/max to avoid clamped flat areas at extremes
+        if (maxHeight > minHeight)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    heights[x, y] = Mathf.InverseLerp(minHeight, maxHeight, heights[x, y]);
+                }
+            }
+        }
+        else
+        {
+            // Degenerate case: all values equal, set to midpoint (or zero)
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    heights[x, y] = 0f;
+                }
+            }
+        }
+
         return heights;
     }
 
@@ -143,7 +197,7 @@ public class TerrainGenerator : MonoBehaviour
         int[,] biomeMap = new int[width, height]; // Currently simple 0 or 1, can be extended for more biomes, as well as adding blending between biomes by using float values
         // Ensure we have at least one cell and at least one pixel per cell
         int cells = Mathf.Max(1, numOfCells);
-        pixelsPerCell = Mathf.Max(1, height / cells); // assuming square plane for Voronoi diagram
+        pixelsPerCell = Mathf.Max(1, height / numOfCells); // assuming square plane for Voronoi diagram
 
         // Ensure points are generated before use
         GeneratePoints();
@@ -202,5 +256,86 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
     }
+    void AssignSplatMap (Terrain terrain, TerrainData terrainData, int[,] biomeMap) {
+        // declare a new empty array ready for custom splatmap data:
+        float[, ,] splatmapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
 
+        for (int y = 0; y < terrainData.alphamapHeight; y++)
+            {
+            for (int x = 0; x < terrainData.alphamapWidth; x++)
+             {
+                // Normalise x/y coordinates to range 0-1 
+                float y_01 = (float)y/(float)terrainData.alphamapHeight;
+                float x_01 = (float)x/(float)terrainData.alphamapWidth;
+                 
+                // Sample the height at this location 
+                float height = terrainData.GetHeight(Mathf.RoundToInt(y_01 * terrainData.heightmapResolution),Mathf.RoundToInt(x_01 * terrainData.heightmapResolution) );
+                 
+                // Calculate the normal of the terrain 
+                Vector3 normal = terrainData.GetInterpolatedNormal(y_01,x_01);
+      
+                // Calculate the steepness of the terrain
+                float steepness = terrainData.GetSteepness(y_01,x_01);
+                 
+                // Setup an array to record the mix of texture weights at this point
+                float[] splatWeights = new float[terrainData.alphamapLayers];
+              
+                // Sample the biome for this point using the precomputed biomeMap
+                int mapX = Mathf.Clamp(Mathf.RoundToInt(x_01 * (Width - 1)), 0, Width - 1);
+                int mapY = Mathf.Clamp(Mathf.RoundToInt(y_01 * (Height - 1)), 0, Height - 1);
+                int biome = biomeMap[mapX, mapY];
+
+                // bias texture weights by biome type (0 = grassland, 1 = desert)
+                if (biome == 0) // grassland
+                {
+                    // More grass (texture 0), less sand (texture 1)
+                    splatWeights[0] = 1.0f;
+                    splatWeights[1] = 0f;
+                }
+                else if (biome == 1) // desert
+                {
+                    // More sand (texture 1), less grass (texture 0)
+                    splatWeights[0] = 0f;
+                    splatWeights[1] = 1.0f;
+                }
+                else
+                {
+                    // default
+                    splatWeights[0] = 0.5f;
+                    splatWeights[1] = Mathf.Clamp01(terrainData.heightmapResolution - height);
+                }
+                /***
+                // Texture[0] has constant influence
+                splatWeights[0] = 0.5f;
+                 
+                // Texture[1] is stronger at lower altitudes
+                splatWeights[1] = Mathf.Clamp01((terrainData.heightmapHeight - height));
+                 
+                // Texture[2] stronger on flatter terrain
+                // Note "steepness" is unbounded, so we "normalise" it by dividing by the extent of heightmap height and scale factor
+                // Subtract result from 1.0 to give greater weighting to flat surfaces
+                splatWeights[2] = 1.0f - Mathf.Clamp01(steepness*steepness/(terrainData.heightmapHeight/5.0f));
+                 
+                // Texture[3] increases with height but only on surfaces facing positive Z axis 
+                splatWeights[3] = height * Mathf.Clamp01(normal.z);
+                ***/
+                 
+                // Sum of all textures weights must add to 1, so calculate normalization factor from sum of weights
+                float z = splatWeights.Sum();
+                 
+                // Loop through each terrain texture
+                for(int i = 0; i<terrainData.alphamapLayers; i++){
+                     
+                    // Normalize so that sum of all texture weights = 1
+                    splatWeights[i] /= z;
+                     
+                    // Assign this point to the splatmap array
+                    splatmapData[x, y, i] = splatWeights[i];
+                }
+            }
+        }
+      
+        // Finally assign the new splatmap to the terrainData:
+        terrainData.SetAlphamaps(0, 0, splatmapData);
+    }
 }
