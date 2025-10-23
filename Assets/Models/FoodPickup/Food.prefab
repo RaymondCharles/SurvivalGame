@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3397220203198519679}
   - component: {fileID: 6053502023548664307}
   - component: {fileID: 420923063850675439}
+  - component: {fileID: 2338474977476328317}
   m_Layer: 0
   m_Name: Food
   m_TagString: DroppedItem
@@ -101,7 +102,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -149,3 +150,25 @@ MonoBehaviour:
   item: {fileID: 11400000, guid: ccb4e2b54ed7eab4886dacb8a5d88e1a, type: 2}
   pickedUp: 0
   enabledPickupDelay: 0.5
+--- !u!64 &2338474977476328317
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3779475039877052917}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}

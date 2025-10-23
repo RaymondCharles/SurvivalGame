@@ -15,7 +15,7 @@ MonoBehaviour:
   id: Potion
   desc: Restores some health
   icon: {fileID: 21300000, guid: 8e578cc530374b644a95dec14fd7f59b, type: 3}
-  prefab: {fileID: 0}
+  prefab: {fileID: 919132149155446097, guid: f8db45c3d0300f94f943c0f5c1165e4b, type: 3}
   isConsumable: 1
   hpRestoreAmount: 30
   hungerRestoreAmount: 0
