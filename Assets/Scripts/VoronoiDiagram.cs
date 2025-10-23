@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// TODO:
+// 1. Add noise to cell edges for more natural look
+// 2. Optimize point search to reduce computation time
 public class VoronoiDiagram : MonoBehaviour
 {
     [SerializeField] private Color[] cellColors;
@@ -75,16 +78,16 @@ public class VoronoiDiagram : MonoBehaviour
             }
         }
         ***/
-        
+
         // Loop through each pixel to determine its closest point, and assign color accordingly
-        for (int x= 0; x < imgSize; x++)
+        for (int x = 0; x < imgSize; x++)
         {
             for (int y = 0; y < imgSize; y++)
             {
                 // Get the grid position of the current pixel
                 int gridX = x / pixelsPerCell;
                 int gridY = y / pixelsPerCell;
-                        
+
                 float closestDist = Mathf.Infinity;
                 Vector2Int closestCell = new Vector2Int();
 
@@ -120,7 +123,7 @@ public class VoronoiDiagram : MonoBehaviour
         string path = System.IO.Path.Combine(Application.persistentDataPath, $"voronoi_{System.DateTime.Now:yyyyMMdd_HHmmss}.png");
         System.IO.File.WriteAllBytes(path, png);
     }
-    
+
     private void GeneratePoints()
     {
         pointsPosArray = new Vector2Int[numOfCells, numOfCells];

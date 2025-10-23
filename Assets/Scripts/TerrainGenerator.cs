@@ -22,7 +22,16 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField, Range(1, 16), Tooltip("Number of Perlin noise octaves")]
     private int octaves = 3;
 
-    public int Width  { get => width;  set => width  = Mathf.Max(16, value); }
+    // Voronoi diagram fields
+    [SerializeField] private int[] biomes;
+    [SerializeField] private int numOfCells = 10;
+    private int imgSize;
+    private int pixelsPerCell;
+    private Vector2Int[,] pointsPosArray; // Array to hold cell point positions
+    private int[,] cellBiomesArray; // Array to hold cell biomes
+
+
+    public int Width { get => width; set => width = Mathf.Max(16, value); }
     public int Height { get => height; set => height = Mathf.Max(16, value); }
     public int Depth  { get => depth;  set => depth  = Mathf.Clamp(value, 1, 10000); }
     public float Scale{ get => scale;  set => scale  = Mathf.Clamp(value, 0.0001f, 10000f); }
@@ -35,7 +44,12 @@ public class TerrainGenerator : MonoBehaviour
         height = Mathf.Max(16, height);
         depth  = Mathf.Clamp(depth, 1, 10000);
         scale  = Mathf.Clamp(scale, 0.0001f, 10000f);
-        octaves= Mathf.Clamp(octaves, 1, 32);
+        octaves = Mathf.Clamp(octaves, 1, 32);
+    
+        if (biomes == null || biomes.Length == 0)
+        {
+            biomes = new int[] { 0, 1 }; // Default biome types - 0 = grassland, 1 = desert
+        }
     }
     public float persistance = 0.5f; // Range 0-1: Amplitude multiplier for each octave
     public float lacunarity = 2f; // Frequency multiplier for each octave
@@ -63,12 +77,15 @@ public class TerrainGenerator : MonoBehaviour
         terrainData.heightmapResolution = width + 1;
         terrainData.size = new Vector3(width, depth, height);
 
+
         // Set heights using a height map
-        terrainData.SetHeights(0, 0, GenerateHeights());
+
+        terrainData.SetHeights(0, 0, GenerateHeights(GenerateVDiagram()));
+
         return terrainData;
     }
 
-    float[,] GenerateHeights()
+    float[,] GenerateHeights(int[,] biomeMap)
     {
         // Generate a simple height map using Perlin noise
         float[,] heights = new float[width, height];
@@ -86,6 +103,7 @@ public class TerrainGenerator : MonoBehaviour
                     amplitude *= persistance;
                     frequency *= lacunarity;
                 }
+                heights[x, y] += biomeMap[x, y]; // Add exaggerated height offset based on biome type
                 heights[x, y] = Mathf.InverseLerp(-1f, 1f, heights[x, y]); // Normalize to 0-1 range
             }
         }
@@ -100,9 +118,6 @@ public class TerrainGenerator : MonoBehaviour
 
         return Mathf.PerlinNoise(xCoord, yCoord) * 2f - 1f;
     }
-
-
-
 
     public Vector3 GetRandomPointOnTerrain()
     {
@@ -119,6 +134,73 @@ public class TerrainGenerator : MonoBehaviour
         // Convert to world coordinates
         Vector3 worldPos = new Vector3(randomX + terrainPosX, y, randomZ + terrainPosZ);
         return worldPos;
+    }
+
+    // Voronoi Diagram Generation
+    private int[,] GenerateVDiagram()
+    {
+        // Loop through pixels, assign rules according to Voronoi logic
+        int[,] biomeMap = new int[width, height]; // Currently simple 0 or 1, can be extended for more biomes, as well as adding blending between biomes by using float values
+        // Ensure we have at least one cell and at least one pixel per cell
+        int cells = Mathf.Max(1, numOfCells);
+        pixelsPerCell = Mathf.Max(1, height / cells); // assuming square plane for Voronoi diagram
+
+        // Ensure points are generated before use
+        GeneratePoints();
+
+        // Loop through each pixel to determine its closest point, and assign color accordingly
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                // Get the grid position of the current pixel
+                int gridX = x / pixelsPerCell;
+                int gridY = y / pixelsPerCell;
+
+                float closestDist = Mathf.Infinity;
+                Vector2Int closestCell = new Vector2Int();
+
+                for (int i = -1; i < 2; i++)
+                {
+                    for (int j = -1; j < 2; j++)
+                    {
+                        // Calculate the pixel coordinates
+                        int X = gridX + i;
+                        int Y = gridY + j;
+                        // Check if the pixel is within bounds
+                        if (X < 0 || Y < 0 || X >= numOfCells || Y >= numOfCells) continue;
+
+                        // Create Vector for distance calculation
+                        float distance = Vector2Int.Distance(new Vector2Int(x, y), pointsPosArray[X, Y]);
+
+                        // Once loop exits, we have the closest cell
+                        if (distance < closestDist)
+                        {
+                            closestDist = distance;
+                            closestCell = new Vector2Int(X, Y);
+                        }
+                    }
+                }
+                // Once looped through all nearby points, assign color of closest cell
+                biomeMap[x, y] = cellBiomesArray[closestCell.x, closestCell.y];
+            }
+        }
+        return biomeMap;
+    }
+
+    private void GeneratePoints()
+    {
+        // Generate Array of random points within each cell, and assign each cell a random biome from the array
+        pointsPosArray = new Vector2Int[numOfCells, numOfCells];
+        cellBiomesArray = new int[numOfCells, numOfCells];
+        for (int i = 0; i < numOfCells; i++)
+        {
+            for (int j = 0; j < numOfCells; j++)
+            {
+                pointsPosArray[i, j] = new Vector2Int(i * pixelsPerCell + Random.Range(0, pixelsPerCell), j * pixelsPerCell + Random.Range(0, pixelsPerCell)); // Each point is a random position within its cell
+                cellBiomesArray[i, j] = biomes[Random.Range(0, biomes.Length)];// Assign a random biome from the array
+            }
+        }
     }
 
 }
