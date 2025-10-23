@@ -6,39 +6,17 @@ public class swordBehaviour : MonoBehaviour
 {
     private int attackCombo= 0;
     private float prevAttack = 0;
-    private bool canAttack = true;
+    public bool canAttack = true;
     private float attackCooldown = 1.0f;
     private float attackComboTimer = 3.0f;
     public float swordDamage = 20.0f;
     [SerializeField] private Animator swordAnimator;
     private List<GameObject> enemiesHit = new List<GameObject>();
+    private List<GameObject> objectsHit = new List<GameObject>();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0) && canAttack)
-        {
-            Debug.Log("Attacking");
-            prevAttack = Time.time;
-            attackCombo +=1;
-            if (attackCombo > 3)
-            {
-                attackCombo = 1;
-            }
-            canAttack = false;
-            Invoke(nameof(ResetAttack), attackCooldown);
-            Invoke(nameof(CheckAttackCombo), attackComboTimer);
-        }
-        swordAnimator.SetInteger("attackCombo", attackCombo);
-    }
 
-    void Attack()
+    public void Attack()
     {
         if (canAttack)
         {
@@ -60,13 +38,16 @@ public class swordBehaviour : MonoBehaviour
     {
         canAttack = true;
         enemiesHit.Clear();
+        objectsHit.Clear();
     }
     
     void CheckAttackCombo()
     {
         if ((Time.time - prevAttack >= 2.9))
         {
+            Debug.Log("Reset");
             attackCombo = 0;
+            swordAnimator.SetInteger("attackCombo", attackCombo);
         }
     }
 
@@ -87,7 +68,6 @@ public class swordBehaviour : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        Debug.Log(other);
         if (other.CompareTag("Enemy"))
         {
             Debug.Log("Colliding with enemy");
@@ -97,6 +77,15 @@ public class swordBehaviour : MonoBehaviour
                 enemiesHit.Add(enemy);
                 enemy.GetComponent<EnemyHealth>().TakeDamage(swordDamage);
                 Debug.Log("Enemy Hit: " + enemy.name);
+            }
+        }
+        else if (other.CompareTag("Mineable"))
+        {
+            GameObject envObject = other.gameObject;
+            if (!canAttack && !objectsHit.Contains(envObject))
+            {
+                objectsHit.Add(envObject);
+                envObject.GetComponent<mineableBehaviour>().SpawnMaterials((int)swordDamage);
             }
         }
     }

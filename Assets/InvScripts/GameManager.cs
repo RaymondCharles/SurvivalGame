@@ -19,8 +19,10 @@ public class GameManager : MonoBehaviour
     public GameObject Terrain;
     [SerializeField] private List<GameObject> enemyDayPrefabs;
     [SerializeField] private List<GameObject> enemyNightPrefabs;
+    [SerializeField] private List<GameObject> environmentPrefabs;
     private int day = 1;
     private List<GameObject> Enemies = new List<GameObject>();
+    private List<GameObject> EnvironmentObjects = new List<GameObject>();
     private int baseEnemyCount = 50;
 
     //Parameters for Enemy AI Script
@@ -58,8 +60,8 @@ public class GameManager : MonoBehaviour
         int enemyCount;
         if (timeOfDay == dayState.night)
         {
-            //50% more enemies every night
-            enemyCount = Mathf.RoundToInt(baseEnemyCount * Mathf.Pow(1.5f, day));
+            //80% more enemies every night
+            enemyCount = Mathf.RoundToInt(baseEnemyCount * Mathf.Pow(1.8f, day));
             enemyPrefabs = enemyNightPrefabs;
         }
         else
@@ -73,24 +75,39 @@ public class GameManager : MonoBehaviour
         {
             Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
             int index = Random.Range(0, enemyPrefabs.Count);
-            Enemies.Add(SpawnEnemy(enemyPrefabs[index], timeOfDay));
+            Enemies.Add(SpawnObject(enemyPrefabs[index], timeOfDay));
+        }
+
+        int environmentObjectCount = Random.Range(40, 70);
+        environmentObjectCount -= EnvironmentObjects.Count;
+        if (environmentObjectCount > 0)
+        {
+            for (int i=0; i<environmentObjectCount; i++)
+            {
+                Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
+                int index = Random.Range(0, environmentPrefabs.Count);
+                EnvironmentObjects.Add(SpawnObject(environmentPrefabs[index], timeOfDay));
+            }
         }
     }
 
 
-    public GameObject SpawnEnemy(GameObject enemyPrefab, dayState timeOfDay)
+    public GameObject SpawnObject(GameObject prefab, dayState timeOfDay)
     {
         Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
-        GameObject Enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
-        if (timeOfDay == dayState.day)
+        GameObject objectSpawn = Instantiate(prefab, position, Quaternion.identity);
+        if (objectSpawn.CompareTag("Enemy"))
         {
-            Enemy.GetComponent<PassiveAI>().player = player;
+            if (timeOfDay == dayState.day)
+            {
+                objectSpawn.GetComponent<PassiveAI>().player = player;
+            }
+            else
+            {
+                objectSpawn.GetComponent<EnemyAI>().player = player;
+            }
         }
-        else
-        {
-            Enemy.GetComponent<EnemyAI>().player = player;
-        }
-        return Enemy;
+        return objectSpawn;
     }
 
     private void ToggleInventory()

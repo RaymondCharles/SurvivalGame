@@ -21,6 +21,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Attack Settings")]
     public float timeBetweenAttacks = 1.5f;
     public float projectileSpeed = 60f;
+    public int projectileDamage = 5;
 
     private Animator animator;
     private bool playerInSightRange, playerInRangedRange, playerInMeleeRange;
@@ -96,10 +97,12 @@ public class EnemyAI : MonoBehaviour
         if (!alreadyAttacked)
         {
             GameObject p = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+            p.GetComponent<enemyProjectileScript>().Damage = projectileDamage;
             Rigidbody rb = p.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                Vector3 dir = (player.position - firePoint.position).normalized;
+                Vector3 playerPos = new Vector3 (player.position.x, player.position.y + 1, player.position.z);
+                Vector3 dir = (playerPos - firePoint.position).normalized;
                 rb.AddForce(dir * projectileSpeed, ForceMode.Impulse);
             }
             alreadyAttacked = true;
