@@ -25,7 +25,7 @@ public class TerrainGenerator : MonoBehaviour
 
     // Voronoi diagram fields
     [SerializeField] private int[] biomes;
-    [SerializeField] private int numOfCells = 2;
+    private int numOfCells = 2;
     private int pixelsPerCell;
     private Vector2Int[,] pointsPosArray; // Array to hold cell point positions
     private int[,] cellBiomesArray; // Array to hold cell biomes
