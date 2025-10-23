@@ -7,7 +7,7 @@ public class EnemyHealth : MonoBehaviour
     public float currentHealth;
 
     // You can change this value in the Inspector to control the death delay
-    public float deathDelay = 3f;
+
 
     private PassiveAI passiveAI;
     private bool isDead = false;
@@ -50,8 +50,8 @@ public class EnemyHealth : MonoBehaviour
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
-        // --- THIS IS THE FIX ---
-        // Destroy the object after the specified delay
-        Destroy(gameObject, deathDelay);
+   
+        // Destroy the object
+        Destroy(gameObject);
     }
 }

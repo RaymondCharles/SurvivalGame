@@ -6,6 +6,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Required Components")]
     public NavMeshAgent agent;
     public Transform player;
+    public PlayerStats playerStats;
     public GameObject projectilePrefab;
     public Transform firePoint;
     public LayerMask whatIsGround;
@@ -14,13 +15,16 @@ public class EnemyAI : MonoBehaviour
     // Health logic is now in the separate EnemyHealth.cs script
 
     [Header("AI Stats")]
-    public float sightRange = 30f;
+    private float sightRange = 300f;
     public float rangedAttackRange = 15f;
     public float meleeAttackRange = 3f;
 
     [Header("Attack Settings")]
     public float timeBetweenAttacks = 1.5f;
     public float projectileSpeed = 60f;
+    public int projectileDamage = 5;
+    public int meleeDamage = 10;
+    public bool meleeBlocked = false;
 
     private Animator animator;
     private bool playerInSightRange, playerInRangedRange, playerInMeleeRange;
@@ -84,6 +88,14 @@ public class EnemyAI : MonoBehaviour
         {
             if (animator != null) animator.SetTrigger("Punch");
             alreadyAttacked = true;
+            if (!meleeBlocked)
+            {
+                playerStats.TakeDamage(meleeDamage);
+            }
+            else
+            {
+                Debug.Log("Blocked!");
+            }
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
@@ -96,10 +108,12 @@ public class EnemyAI : MonoBehaviour
         if (!alreadyAttacked)
         {
             GameObject p = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+            p.GetComponent<enemyProjectileScript>().Damage = projectileDamage;
             Rigidbody rb = p.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                Vector3 dir = (player.position - firePoint.position).normalized;
+                Vector3 playerPos = new Vector3 (player.position.x, player.position.y + 1, player.position.z);
+                Vector3 dir = (playerPos - firePoint.position).normalized;
                 rb.AddForce(dir * projectileSpeed, ForceMode.Impulse);
             }
             alreadyAttacked = true;

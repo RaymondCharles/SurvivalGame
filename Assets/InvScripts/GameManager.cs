@@ -1,5 +1,7 @@
 using UnityEngine;
 using Cinemachine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,27 +14,74 @@ public class GameManager : MonoBehaviour
 
     private bool isThirdPerson = false;
     public bool isInventoryOpen = false;
+    [SerializeField] private PlayerMovement2 pmScript;
 
     public GameObject Terrain;
-    public GameObject SunflowerNightPrefab;
-    private int day = 1;
-    private GameObject[] Enemies;
-    private int baseEnemyCount = 50;
+    [SerializeField] private List<GameObject> enemyDayPrefabs;
+
+
+    private string[] biomes = {"Desert","Grass","Snow"};
+
+    [SerializeField] private GameObject[] desertEnemyDayPrefabs;
+    [SerializeField] private GameObject[] desertEnemyNightPrefabs;
+    [SerializeField] private GameObject[] desertEnvPrefabs;
+
+    [SerializeField] private GameObject[] grassEnemyDayPrefabs;
+    [SerializeField] private GameObject[] grassEnemyNightPrefabs;
+    [SerializeField] private GameObject[] grassEnvPrefabs;
+
+    [SerializeField] private GameObject[] snowEnemyDayPrefabs;
+    [SerializeField] private GameObject[] snowEnemyNightPrefabs;
+    [SerializeField] private GameObject[] snowEnvPrefabs;
+
+
+    public int day = 0;
+    private List<GameObject> Enemies = new List<GameObject>();
+    private List<GameObject> EnvironmentObjects = new List<GameObject>();
+    private int baseEnemyCount = 20;
 
     //Parameters for Enemy AI Script
     public Transform player;
+    public PlayerStats playerStats;
+
+    public enum dayState { day, night }
+    public dayState timeOfDay;
+
+    public struct BiomePrefabs
+    {
+        public GameObject[] enemyDayPrefabs;
+        public GameObject[] enemyNightPrefabs;
+        public GameObject[] environmentPrefabs;
+    }
+
+    private BiomePrefabs[] biomePrefabs = new BiomePrefabs[3];
 
 
     //Bake the meshes as soon as the map loads.
     void Start()
     {
         Terrain.GetComponent<TerrainGenerator>().StartWorld();
-        Enemies = new GameObject[baseEnemyCount];
-        for (int i=0; i < Enemies.Length; i++)
+
+        biomePrefabs[0] = new BiomePrefabs
         {
-            Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
-            Enemies[i] = SpawnEnemy(SunflowerNightPrefab);
-        }
+            enemyDayPrefabs = desertEnemyDayPrefabs,
+            enemyNightPrefabs = desertEnemyNightPrefabs,
+            environmentPrefabs = desertEnvPrefabs
+        };
+
+        biomePrefabs[1] = new BiomePrefabs
+        {
+            enemyDayPrefabs = grassEnemyDayPrefabs,
+            enemyNightPrefabs = grassEnemyNightPrefabs,
+            environmentPrefabs = grassEnvPrefabs
+        };
+
+        biomePrefabs[2] = new BiomePrefabs
+        {
+            enemyDayPrefabs = snowEnemyDayPrefabs,
+            enemyNightPrefabs = snowEnemyNightPrefabs,
+            environmentPrefabs = snowEnvPrefabs
+        };
     }
 
     void Update()
@@ -43,23 +92,87 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SwitchTime()
+    {
+        timeOfDay = (timeOfDay == dayState.day) ? dayState.night : dayState.day;
+        int enemyCount;
+        if (timeOfDay == dayState.night)
+        {
+            //40% more enemies every night
+            enemyCount = Mathf.RoundToInt(baseEnemyCount * Mathf.Pow(1.4f, day));
+        }
+        else
+        {
+            //10% more enemies every daytime.
+            enemyCount = Mathf.RoundToInt(baseEnemyCount * Mathf.Pow(1.1f, day));
+        }
+        Debug.Log(enemyCount+ "Total num of enemies per biome");
 
-    public GameObject SpawnEnemy(GameObject enemyPrefab)
+        while (Enemies.Count > 0)
+        {
+            Destroy(Enemies[0]);
+            Enemies.RemoveAt(0);
+        }
+
+
+        foreach (BiomePrefabs biome in biomePrefabs)
+        {
+            GameObject[] enemyPrefabs;
+            enemyPrefabs = (timeOfDay == dayState.night) ? biome.enemyNightPrefabs : biome.enemyDayPrefabs;
+
+            for (int i=0; i < enemyCount; i++)
+            {
+                Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
+                int index = Random.Range(0, (enemyPrefabs.Length - 1));
+                Debug.Log(enemyPrefabs);
+                Debug.Log(index);
+                Enemies.Add(SpawnObject(enemyPrefabs[index], timeOfDay));
+            }
+
+            GameObject[] environmentPrefabs = biome.environmentPrefabs;
+            int environmentObjectCount = Random.Range(40, 70);
+            environmentObjectCount -= EnvironmentObjects.Count;
+            if (environmentObjectCount > 0)
+            {
+                for (int i=0; i<environmentObjectCount; i++)
+                {
+                    Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
+                    int index = Random.Range(0, (environmentPrefabs.Length - 1));
+                    EnvironmentObjects.Add(SpawnObject(environmentPrefabs[index], timeOfDay));
+                }
+            }
+        }
+       
+    }
+
+
+    public GameObject SpawnObject(GameObject prefab, dayState timeOfDay)
     {
         Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
-        GameObject Enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
-        Enemy.GetComponent<EnemyAI>().player = player;
-        return Enemy;
+        GameObject objectSpawn = Instantiate(prefab, position, Quaternion.identity);
+        if (objectSpawn.CompareTag("Enemy"))
+        {
+            if (timeOfDay == dayState.day)
+            {
+                objectSpawn.GetComponent<PassiveAI>().player = player;
+            }
+            else
+            {
+                objectSpawn.GetComponent<EnemyAI>().player = player;
+                objectSpawn.GetComponent<EnemyAI>().playerStats = playerStats;
+            }
+        }
+        return objectSpawn;
     }
 
     private void ToggleInventory()
     {
         isInventoryOpen = !isInventoryOpen;
         inventory.SetActive(isInventoryOpen);
+        pmScript.inventoryOpen = isInventoryOpen;
 
         if (isInventoryOpen)
         {
-            // 🧭 Unlock cursor + disable camera control
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
@@ -67,7 +180,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // 🎮 Restore camera control
             EnableCameraInput();
 
             if (!isThirdPerson)

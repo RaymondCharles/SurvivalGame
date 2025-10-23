@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c8b1a1c5abac87498be8d6f8aa74482, type: 3}
+  m_Name: Circle
+  m_EditorClassIdentifier: 
+  id: Circle
+  desc: 
+  icon: {fileID: 23404151, guid: db4f63ba53f189a40bde12e05a4eb3e8, type: 3}
+  prefab: {fileID: 4468284124086821606, guid: 9f6420d2ed1fd65408e6a225cc35e57e, type: 3}
+  isConsumable: 1
+  hpRestoreAmount: 0
+  hungerRestoreAmount: 0
+  canBeDropped: 1
