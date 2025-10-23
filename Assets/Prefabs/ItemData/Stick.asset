@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c8b1a1c5abac87498be8d6f8aa74482, type: 3}
+  m_Name: Stick
+  m_EditorClassIdentifier: 
+  id: Stick
+  desc: 
+  icon: {fileID: -354478664, guid: a2403927ff895f7469b9afd9bc1e47da, type: 3}
+  prefab: {fileID: 2027968560994371180, guid: daf9d1f4c5270dc44a00967c67474f9b, type: 3}
+  isConsumable: 0
+  hpRestoreAmount: 0
+  hungerRestoreAmount: 0
+  canBeDropped: 1

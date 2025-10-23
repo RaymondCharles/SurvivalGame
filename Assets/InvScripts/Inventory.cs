@@ -8,6 +8,8 @@ using UnityEngine.Rendering;
 public class Inventory : MonoBehaviour
 {
     public InventoryUi ui;
+    public Transform player;
+
     public AudioSource audioSource;
     public GameObject droppedItemPrefab;
     public AudioClip pickupAudio;
@@ -15,6 +17,7 @@ public class Inventory : MonoBehaviour
 
     [SerializeField]
     SerializedDictionary<string, Item> inventory = new();
+    public Dictionary<string, int> itemCounts = new();
 
     public void OnTriggerEnter(Collider other)
     {
@@ -34,43 +37,117 @@ public class Inventory : MonoBehaviour
 
     void AddItem(Item item)
     {
-        var inventoryId = Guid.NewGuid().ToString();
-        inventory.Add(inventoryId, item);
-        ui.AddUIItem(inventoryId, item);
+        string existingId = null;
+        foreach (var x in inventory)
+        {
+            if (x.Value.name == item.name)
+            {
+                existingId = x.Key;
+                break;
+            }
+        }
+        if (existingId != null) {
+            itemCounts[existingId]++;
+            ui.UpdateUIItemCount(existingId, itemCounts[existingId]);
+                
+        }
+        else
+        {
+            var inventoryId = Guid.NewGuid().ToString();
+            inventory.Add(inventoryId, item);
+            itemCounts[inventoryId] = 1;
+            ui.AddUIItem(inventoryId, item);
+
+        }
+
+        var ProgressUi = FindFirstObjectByType<itemProgressUI>();
+        if (ProgressUi != null)
+        {
+            ProgressUi.AddItem(item.name, 1);
+        }
     }
 
     public void DropItem(string inventoryId)
     {
-        var droppedItem = Instantiate(droppedItemPrefab, transform.position, Quaternion.identity).GetComponent<DroppedItem>();
+        if (!inventory.TryGetValue(inventoryId,out var item))
+        {
+            return;
+        }
+        Vector3 dropPos = player.position + player.forward * 1f + Vector3.up * 0.5f;
+        Instantiate(item.prefab, dropPos, Quaternion.identity);
 
-        var item = inventory.GetValueOrDefault(inventoryId);
-        droppedItem.Initialize(item);
-        inventory.Remove(inventoryId);
-        ui.RemoveUIItem(inventoryId);
-        audioSource.PlayOneShot(droppedAudio);
+        if (itemCounts[inventoryId] > 1)
+        {
+            itemCounts[inventoryId]--;
+            ui.UpdateUIItemCount(inventoryId, itemCounts[inventoryId]);
+        }
+        else
+        {
+            inventory.Remove(inventoryId);
+            itemCounts.Remove(inventoryId);
+            ui.RemoveUIItem(inventoryId);
+            
+        }
+
+        var ProgressUI = FindFirstObjectByType<itemProgressUI>();
+        if (ProgressUI != null) 
+        {
+            ProgressUI.RemoveItem(item.name, 1);
+        }
+
+        if (audioSource && droppedAudio)
+        {
+            audioSource.PlayOneShot(droppedAudio);
+        }
+
+           
+    }
+
+
+    public Dictionary<string,int> GetItemCountsByName()
+    {
+        Dictionary<string, int> counts = new();
+        foreach(var x in inventory)
+        {
+            string name = x.Value.name.ToLower();
+            int count = itemCounts[x.Key];
+            if (!counts.ContainsKey(name)){
+                counts[name] = 0;
+
+            }
+            counts[name] += count;
+           
+        }
+        return counts;
+
     }
 
     public void RemoveItemFromInventory(string inventoryId)
     {
-        if (inventory.ContainsKey(inventoryId))
+        if (!inventory.ContainsKey(inventoryId))
+        {
+            return;
+        }
+        if (itemCounts[inventoryId] > 1)
+        {
+            itemCounts[inventoryId ]--;
+            ui.UpdateUIItemCount(inventoryId,itemCounts[inventoryId]);
+        }
+        else
         {
             inventory.Remove(inventoryId);
+            itemCounts.Remove(inventoryId);
             ui.RemoveUIItem(inventoryId);
-            Debug.Log("Item used and removed from inventory.");
         }
     }
 
-    // NEW: Add this method to safely get an item by ID
     public bool TryGetItem(string inventoryId, out Item item)
     {
         return inventory.TryGetValue(inventoryId, out item);
     }
 
-    void Start()
-    {
-    }
+    public Dictionary<string, Item> GetInventoryDictionary() => inventory;
+    public Dictionary<string, int> GetItemCounts() => itemCounts;
 
-    void Update()
-    {
-    }
+
 }
