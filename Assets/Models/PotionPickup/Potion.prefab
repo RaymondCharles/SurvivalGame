@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5134528308589772409}
   - component: {fileID: 7062720652846347125}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: Potion
   m_TagString: DroppedItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
