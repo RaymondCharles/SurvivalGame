@@ -55,6 +55,8 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        
         // 1. Cursor Management for Resuming Control (Click to lock)
         if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked && !GameManager.GetComponent<GameManager>().isInventoryOpen)
         {

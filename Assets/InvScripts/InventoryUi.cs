@@ -12,7 +12,7 @@ public class InventoryUi : MonoBehaviour
     public Transform uiInventoryParent;
     public InvDropPanel invDropPanel;
     public InvPlanelUse invUsePanel;
-    public PlayerStatss playerStats;
+    public PlayerStats playerStats;
 
     public ItemUi selectedItemUi;
     public string currentItemId;
