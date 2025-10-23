@@ -365,14 +365,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1818981634477537916, guid: f7bab3a3312c461429a11c37b6ccf619,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1818981634477537916, guid: f7bab3a3312c461429a11c37b6ccf619,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1818981634477537916, guid: f7bab3a3312c461429a11c37b6ccf619,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1818981634477537916, guid: f7bab3a3312c461429a11c37b6ccf619,
+        type: 3}
+      propertyPath: m_Texture
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325530957066441030, guid: f7bab3a3312c461429a11c37b6ccf619,
+        type: 3}
+      propertyPath: sceneToLoad
+      value: SampleScene
+      objectReference: {fileID: 0}
     - target: {fileID: 8095131017724978546, guid: f7bab3a3312c461429a11c37b6ccf619,
         type: 3}
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3947490967095204298, guid: f7bab3a3312c461429a11c37b6ccf619, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4656384717520201324, guid: f7bab3a3312c461429a11c37b6ccf619, type: 3}
+    - {fileID: 7945026287866798280, guid: f7bab3a3312c461429a11c37b6ccf619, type: 3}
+    - {fileID: 7849340391814156549, guid: f7bab3a3312c461429a11c37b6ccf619, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7bab3a3312c461429a11c37b6ccf619, type: 3}
