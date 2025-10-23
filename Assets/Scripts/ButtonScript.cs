@@ -33,6 +33,6 @@ public class ButtonScript : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     private IEnumerator LoadSceneWithDelay()
     {
         yield return new WaitForSeconds(loadDelay);
-        SceneManager.LoadScene(sceneToLoad);
+        SceneLoading.Load(sceneToLoad);
     }
 }
