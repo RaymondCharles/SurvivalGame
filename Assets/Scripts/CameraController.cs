@@ -7,8 +7,8 @@ using Cinemachine;
 public class CameraController : MonoBehaviour
 {
     [Header("Camera Settings")]
-    public float sensX = 400f;
-    public float sensY = 400f;
+    public float sensX = 200f;
+    public float sensY = 200f;
     public Transform orientation;
     public Transform followTarget;
     private float yRotation;
@@ -22,7 +22,9 @@ public class CameraController : MonoBehaviour
 
     public GameObject GameManager;
     
-    private Quaternion prevRotation;
+    private float prevXInput;
+    private float prevYInput;
+
     
 
 
@@ -53,7 +55,7 @@ public class CameraController : MonoBehaviour
         freeLookCamera.m_XAxis.m_MaxSpeed = horizontal; // horizontal rotation speed
         freeLookCamera.m_YAxis.m_MaxSpeed = vertical / 100;   // vertical rotation speed
         pov.m_HorizontalAxis.m_MaxSpeed = horizontal;
-        pov.m_VerticalAxis.m_MaxSpeed = vertical;
+        pov.m_VerticalAxis.m_MaxSpeed = vertical / 2;
     }
 
     // Update is called once per frame
@@ -91,10 +93,8 @@ public class CameraController : MonoBehaviour
 
         if (isThirdPerson)
         {
-            prevRotation = playerCam.rotation;
-            freeLookCamera.Priority = 20;
             virtualCam.Priority = 10;
-            Invoke(nameof(ResetView), 0.1f);
+            freeLookCamera.Priority = 20;
         }
         else
         {
@@ -103,8 +103,4 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    void ResetView()
-    {   
-        playerCam.rotation = prevRotation;
-    }
 }
