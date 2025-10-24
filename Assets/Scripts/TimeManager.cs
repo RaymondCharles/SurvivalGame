@@ -92,12 +92,19 @@ public class TimeManager : MonoBehaviour
         GUI.Label(new Rect(30, 10, 300, 70), timeOfDay);
         GUI.Label(new Rect(30, 80, 300, 70), currDay);
         // Show TempSecs label for the first few seconds after the scene loads
-        float labelDuration = 15f; // seconds to show the label
-        if (Time.timeSinceLevelLoad < labelDuration)
+        float introLabelDuration = 10f; // seconds to show the label
+        if (Time.timeSinceLevelLoad < introLabelDuration)
         {
             GUI.Label(new Rect(800, 300, 300, 70), "SURVIVE!");
             GUI.Label(new Rect(800, 380, 300, 70), "DAY 1/10");
+        }else if (Time.timeSinceLevelLoad > introLabelDuration && Time.timeSinceLevelLoad < introLabelDuration + 10f)
+        {
+            GUI.Label(new Rect(800, 100, 1000, 70), "Collect materials from monsters and the ");
+            GUI.Label(new Rect(800, 80, 1000, 70), "environment and craft better gear to survive!");
+        }else if (Days >= 10)
+        {
+            GUI.Label(new Rect(800, 300, 300, 70), "YOU SURVIVED!");
+            GUI.Label(new Rect(800, 380, 300, 70), "CONGRATULATIONS!");
         }
-
-    }
+    }#
 }
