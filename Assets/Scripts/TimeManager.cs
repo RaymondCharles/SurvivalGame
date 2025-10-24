@@ -95,16 +95,16 @@ public class TimeManager : MonoBehaviour
         float introLabelDuration = 10f; // seconds to show the label
         if (Time.timeSinceLevelLoad < introLabelDuration)
         {
-            GUI.Label(new Rect(800, 300, 300, 70), "SURVIVE!");
-            GUI.Label(new Rect(800, 380, 300, 70), "DAY 1/10");
+            GUI.Label(new Rect(800, 300, 300, 80), "SURVIVE!");
+            GUI.Label(new Rect(800, 390, 300, 80), "DAY 1/10");
         }else if (Time.timeSinceLevelLoad > introLabelDuration && Time.timeSinceLevelLoad < introLabelDuration + 10f)
         {
-            GUI.Label(new Rect(800, 100, 1000, 70), "Collect materials from monsters and the ");
-            GUI.Label(new Rect(800, 80, 1000, 70), "environment and craft better gear to survive!");
+            GUI.Label(new Rect(400, 300, 1500, 80), "Collect materials from monsters and the ");
+            GUI.Label(new Rect(380, 390, 1500, 80), "environment and craft better gear to survive!");
         }else if (Days >= 10)
         {
-            GUI.Label(new Rect(800, 300, 300, 70), "YOU SURVIVED!");
-            GUI.Label(new Rect(800, 380, 300, 70), "CONGRATULATIONS!");
+            GUI.Label(new Rect(700, 300, 300, 80), "YOU SURVIVED!");
+            GUI.Label(new Rect(680, 390, 300, 80), "CONGRATULATIONS!");
         }
-    }#
+    }
 }

@@ -270,7 +270,7 @@ public class TerrainGenerator : MonoBehaviour
 
         float y = terrain.SampleHeight(new Vector3((float)randomX + terrainPosX, 0f, (float)randomZ + terrainPosZ));
 
-        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y, (float)randomZ + terrainPosZ); // add slight offset to Y to avoid spawning inside terrain
+        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y + 7f, (float)randomZ + terrainPosZ); // add slight offset to Y to avoid spawning inside terrain
         if (Physics.Raycast(worldPos + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f))
         {
             worldPos.y = hit.point.y + 0.1f;
