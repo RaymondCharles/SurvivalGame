@@ -1,21 +1,21 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // <<< Added
+using UnityEngine.InputSystem;
 
 public class PlayerEquipment : MonoBehaviour
 {
+    //GameObject references
     public GameObject playerSword = null;
     public GameObject playerShield = null;
     public GameObject playerArmor = null;
     public swordBehaviour swordScript = null;
     public shieldBehaviour shieldScript = null;
 
-    // --- New Input System References ---
+    //Input System References
     private PlayerInputActions playerInputActions;
     private InputAction attackAction;
     private InputAction blockAction;
-    // ---
 
-    private void Awake() // Changed from Update to Awake for setup
+    private void Awake()
     {
         playerInputActions = new PlayerInputActions();
         attackAction = playerInputActions.Player.Attack;
@@ -37,8 +37,7 @@ public class PlayerEquipment : MonoBehaviour
         // Check Sword Attack
         if (playerSword != null && swordScript != null)
         {
-            // Use attackAction.triggered for button down equivalent
-            if (attackAction.triggered && (shieldScript == null || !shieldScript.isBlocking)) // Check if shieldScript exists
+            if (attackAction.triggered && (playerShield == null || !shieldScript.isBlocking)) // Check if player equipped shield and isn't in the middle of blocking
             {
                 swordScript.Attack();
             }
@@ -47,8 +46,7 @@ public class PlayerEquipment : MonoBehaviour
         // Check Shield Block
         if (playerShield != null && shieldScript != null)
         {
-            // Use blockAction.IsPressed() for button held equivalent
-            if (blockAction.IsPressed() && (swordScript == null || swordScript.canAttack)) // Check if swordScript exists
+            if (blockAction.IsPressed() && (playerSword == null || swordScript.canAttack)) // Check if player equipped sword and isn't mid attack
             {
                 // Ensure Block() is only called once when starting
                 if (!shieldScript.isBlocking)
@@ -56,20 +54,13 @@ public class PlayerEquipment : MonoBehaviour
                     shieldScript.Block();
                 }
             }
-            // Use blockAction.WasReleasedThisFrame() for button up equivalent
             else if (blockAction.WasReleasedThisFrame() && shieldScript.isBlocking)
-            {
-                shieldScript.StopBlock();
-            }
-            // Failsafe: If button is not held but script thinks it's blocking
-            else if (!blockAction.IsPressed() && shieldScript.isBlocking)
             {
                 shieldScript.StopBlock();
             }
         }
     }
 
-    // (AddSword, AddShield, AddArmor methods remain unchanged)
     public void AddSword(GameObject Sword)
     {
         playerSword = Sword;

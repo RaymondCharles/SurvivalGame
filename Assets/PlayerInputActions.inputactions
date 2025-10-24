@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CrouchSlide",
+                    "name": "Crouch",
                     "type": "Button",
                     "id": "7026435d-8ad4-4af1-9baa-cb1cbe5a7bb6",
                     "expectedControlType": "Button",
@@ -72,6 +72,15 @@
                     "name": "ToggleInventory",
                     "type": "Button",
                     "id": "c7485b93-d69d-45ad-9149-2daaeac4468e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Slide",
+                    "type": "Button",
+                    "id": "d60c3020-28e7-4cc2-9e7c-8ee53330bee5",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -152,7 +161,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CrouchSlide",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -203,11 +212,22 @@
                 {
                     "name": "",
                     "id": "9f88a7f1-042c-4270-92f1-2cc8c61d5753",
-                    "path": "<Keyboard>/#(I)",
+                    "path": "<Keyboard>/#(E)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "ToggleInventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2842bc4b-2382-4d8b-bafd-45a9210309a7",
+                    "path": "<Keyboard>/#(C)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
