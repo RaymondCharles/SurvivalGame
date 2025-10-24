@@ -25,7 +25,7 @@ public class TerrainGenerator : MonoBehaviour
 
     // Voronoi diagram fields
     [SerializeField] private int[] biomes;
-    private int numOfCells = 2;
+    private int numOfCells = 3;
     private int pixelsPerCell;
     private Vector2Int[,] pointsPosArray; // Array to hold cell point positions
     private int[,] cellBiomesArray; // Array to hold cell biomes
@@ -48,7 +48,7 @@ public class TerrainGenerator : MonoBehaviour
     
         if (biomes == null || biomes.Length == 0)
         {
-            biomes = new int[] { 0, 1 }; // Default biome types - 0 = grassland, 1 = desert
+            biomes = new int[] { 0, 1, 2 }; // Default biome types - 0 = grassland, 1 = desert, 2 = snow
         }
     }
     public float persistance = 0.5f; // Range 0-1: Amplitude multiplier for each octave
@@ -97,14 +97,13 @@ public class TerrainGenerator : MonoBehaviour
         float minHeight = float.MaxValue;
         float maxHeight = float.MinValue;
 
-        int blendRange = 40; // Number of coords over which to blend between biomes
+        int blendRange = 40;
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 int currBiome = biomeMap[x, y];
-                // Use local variables so we don't mutate class fields every pixel
                 float baseAmplitude = 1f;
                 float baseFrequency = 1f;
                 int usedOctaves = Octaves;
@@ -115,7 +114,6 @@ public class TerrainGenerator : MonoBehaviour
                     baseFrequency = 4f;
                     lacunarity = 0.25f;
                     depth = 100;
-                    // keep usedOctaves as configured
                 }
                 else if (currBiome == 1) // Desert biome
                 {
@@ -123,6 +121,14 @@ public class TerrainGenerator : MonoBehaviour
                     baseFrequency = 2.5f;   // Higher frequency for more variation
                     usedOctaves = 4;      // local override for desert
                     depth = 60;
+                }
+                else if (currBiome == 2) // Snow biome
+                {
+                    baseAmplitude = 4f; // Lower amplitude for flatter terrain
+                    baseFrequency = 4f;   // Lower frequency for more variation
+                    usedOctaves = 2;      // local override for snow
+                    depth = 150;          // Taller terrain for mountains
+                    lacunarity = 0.25f;
                 }
                 
                 /***
@@ -227,49 +233,41 @@ public class TerrainGenerator : MonoBehaviour
 
     public Vector3 GetRandomPointOnTerrain(int biome)
     {
-        // Ensure terrain and biomeMap are available
+        // Returns a random point on the terrain within the specified biome type
         terrain ??= GetComponent<Terrain>();
         if (terrain == null || biomeMap == null) return Vector3.zero;
 
-        // Get terrain position and dimensions
         float terrainPosX = terrain.transform.position.x;
         float terrainPosZ = terrain.transform.position.z;
 
-        // Pick initial random point
         int randomX = Random.Range(0, Width);
         int randomZ = Random.Range(0, Height);
 
-        // Safety cap on attempts to avoid infinite loops
         int attempts = 0;
         int maxAttempts = 10; // currently set low for testing purposes, would need to be some multiple of biome types
 
-        // Find a random position that matches the requested biome (with a safety cap on attempts)
         while (biomeMap[randomX, randomZ] != biome && attempts++ < maxAttempts)
         {
             Debug.Log(randomX + "," + randomZ + " is biome " + biomeMap[randomX, randomZ] + ", looking for " + biome);
-            // Pick a random point in terrain space
             randomX = Random.Range(0, Width);
             randomZ = Random.Range(0, Height);
         }
 
-        // If we didn't find a matching biome, return zero (or handle as needed)
         if (biomeMap[randomX, randomZ] != biome)
         {
             Debug.Log("Failed to find matching biome");
             return Vector3.zero;
         }
 
-        // Get height (Y) at that point
         float y = terrain.SampleHeight(new Vector3((float)randomX + terrainPosX, 0f, (float)randomZ + terrainPosZ));
 
-        // Convert to world coordinates
-        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y + 1f, (float)randomZ + terrainPosZ); // add slight offset to Y to avoid spawning inside terrain
+        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y + 10f, (float)randomZ + terrainPosZ); // add slight offset to Y to avoid spawning inside terrain
         if (Physics.Raycast(worldPos + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f))
         {
             worldPos.y = hit.point.y + 0.1f;
         }
 
-        Debug.Log("Found point at " + worldPos);
+        Debug.Log("Found point at " + worldPos +  " looking for biome:" + biome + " in biome " + biomeMap[randomX, randomZ]);
         return worldPos;
     }
 
@@ -278,11 +276,9 @@ public class TerrainGenerator : MonoBehaviour
     {
         // Loop through pixels, assign rules according to Voronoi logic
         int[,] biomeMap = new int[width, height]; // Currently simple 0 or 1, can be extended for more biomes, as well as adding blending between biomes by using float values
-        // Ensure we have at least one cell and at least one pixel per cell
         int cells = Mathf.Max(1, numOfCells);
-        pixelsPerCell = Mathf.Max(1, height / numOfCells); // assuming square plane for Voronoi diagram
+        pixelsPerCell = Mathf.Max(1, height / numOfCells); // assuming square plane for Voronoi diagram - could need to modify for non-square
 
-        // Ensure points are generated before use
         GeneratePoints();
 
         // Loop through each pixel to determine its closest point, and assign color accordingly
@@ -304,7 +300,6 @@ public class TerrainGenerator : MonoBehaviour
                         // Calculate the pixel coordinates
                         int X = gridX + i;
                         int Y = gridY + j;
-                        // Check if the pixel is within bounds
                         if (X < 0 || Y < 0 || X >= numOfCells || Y >= numOfCells) continue;
 
                         // Create Vector for distance calculation
@@ -340,7 +335,7 @@ public class TerrainGenerator : MonoBehaviour
         }
     }
     void AssignSplatMap (Terrain terrain, TerrainData terrainData, int[,] biomeMap) {
-        // declare a new empty array ready for custom splatmap data:
+        // Creates Splat map based on biome type at each point on the terrain
         float[, ,] splatmapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
 
         for (int y = 0; y < terrainData.alphamapHeight; y++)
@@ -374,12 +369,21 @@ public class TerrainGenerator : MonoBehaviour
                     // More grass (texture 0), less sand (texture 1)
                     splatWeights[0] = 1.0f;
                     splatWeights[1] = 0f;
+                    splatWeights[2] = 0f;
                 }
                 else if (biome == 1) // desert
                 {
                     // More sand (texture 1), less grass (texture 0)
                     splatWeights[0] = 0f;
                     splatWeights[1] = 1.0f;
+                    splatWeights[2] = 0f;
+                }
+                else if (biome == 2) // snow
+                {
+                    // More snow (texture 2), less grass (texture 0)
+                    splatWeights[0] = 0f;
+                    splatWeights[1] = 0f;
+                    splatWeights[2] = 1.0f;
                 }
                 else
                 {
