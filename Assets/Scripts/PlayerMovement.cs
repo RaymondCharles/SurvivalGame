@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement")]
+    //Movement  
     private float moveSpeed;
     public float walkSpeed = 7f;
     public float sprintSpeed = 10f;
@@ -14,18 +14,18 @@ public class PlayerMovement : MonoBehaviour
 
     public bool isSliding = false;
 
-    [Header("Jumping")]
+    //Jumping
     public float jumpForce = 5f;
     public float jumpCooldown = 0.25f;
     public float airMultiplier = 0.4f;
     bool readyToJump;
 
-    [Header("Crouching")]
+    //Crouch
     public float crouchSpeed = 3.5f;
     public float crouchYScale = 0.5f;
     public float startYScale;
 
-    [Header("Acceleration & Deceleration")]
+    //Accel & Decel
     // Recommended high rates for realistic, snappy feel
     public float acceleration = 40f; // Adjusted for better control responsiveness
     public float deceleration = 35f;
@@ -33,22 +33,22 @@ public class PlayerMovement : MonoBehaviour
     private float currentSpeed;
 
 
-    [Header("Keybinds")]
+    
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
     public KeyCode crouchKey = KeyCode.LeftControl;
-
-    [Header("Ground Check")]
+    
+    
     public float playerHeight = 2.1f;
     public LayerMask whatIsGround;
     bool grounded;
 
-    [Header("Slope Handling")]
+    
     public float maxSlopeAngle = 45f;
     private RaycastHit slopeHit;
     private bool exitingSlope;
 
-    [Header("References")]
+    
     public Transform orientation;
 
     // Physics constant (for stability)

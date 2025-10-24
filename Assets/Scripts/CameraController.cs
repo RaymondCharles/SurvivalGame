@@ -4,7 +4,6 @@ using Cinemachine;
 
 public class CameraController : MonoBehaviour
 {
-    [Header("Camera Settings")]
     public float sensX = 400f;
     public float sensY = 400f;
     public Transform orientation;
@@ -109,5 +108,11 @@ public class CameraController : MonoBehaviour
             virtualCam.Priority = 20;
             freeLookCamera.Priority = 10;
         }
+    }
+
+    // Add this function to CameraController.cs
+    public bool IsThirdPersonView()
+    {
+        return isThirdPerson; // Return the current state
     }
 }
