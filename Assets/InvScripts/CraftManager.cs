@@ -1,6 +1,8 @@
 using NUnit.Framework.Constraints;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditorInternal.Profiling.Memory.Experimental;
+#endif
 using UnityEngine;
 
 public class CraftManager : MonoBehaviour
