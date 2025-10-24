@@ -316,6 +316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bf90bd18d3ef91429715a1eda22a97e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 0
   walkSpeed: 7
   sprintSpeed: 10
   groundDrag: 7
@@ -323,21 +324,30 @@ MonoBehaviour:
   jumpForce: 3
   jumpCooldown: 0.25
   airMultiplier: 1
+  readyToJump: 0
   crouchSpeed: 3.5
   crouchYScale: 0.5
   startYScale: 0
   acceleration: 50
   deceleration: 40
   reverseDecelerationMultiplier: 4
+  currentSpeed: 0
   jumpKey: 32
   sprintKey: 304
   crouchKey: 306
   playerHeight: 2.1
   whatIsGround:
-    serializedVersion: 2
     m_Bits: 0
+  grounded: 0
   maxSlopeAngle: 45
+  exitingSlope: 0
   orientation: {fileID: 665086287}
+  controller: {fileID: 0}
+  velocityCC: {x: 0, y: 0, z: 0}
+  horizontalInput: 0
+  verticalInput: 0
+  moveDirection: {x: 0, y: 0, z: 0}
+  lastMoveDirection: {x: 0, y: 0, z: 1}
   state: 0
 --- !u!114 &56935152
 MonoBehaviour:
@@ -410,6 +420,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientation: {fileID: 665086287}
   playerObj: {fileID: 1743614458}
+  controller: {fileID: 0}
+  pm: {fileID: 0}
   maxSlideTime: 2
   slideForce: 15
   slideFriction: 3
@@ -417,10 +429,21 @@ MonoBehaviour:
   downhillAccelMultiplier: 2
   gravityDownhillFactor: 10
   slideYScale: 0.5
+  startYScale: 0
   slideKey: 306
+  horizontalInput: 0
+  verticalInput: 0
+  sliding: 0
+  slideSpeed: 0
+  slideTimer: 0
+  lastMoveDir: {x: 0, y: 0, z: 0}
   coastDuration: 1.8
   coastSlowdownRate: 4
   maxCoastDuration: 3
+  coasting: 0
+  coastTimer: 0
+  coastSpeed: 0
+  coastDir: {x: 0, y: 0, z: 0}
   showDebugSpeed: 1
 --- !u!143 &56935154
 CharacterController:
@@ -2549,8 +2572,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 210, y: 0}
-  m_SizeDelta: {x: 420, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &507663041
 MonoBehaviour:
@@ -5579,8 +5602,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 210, y: 0}
-  m_SizeDelta: {x: 420, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1440839713
 MonoBehaviour:
@@ -7439,7 +7462,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2345251118307689590}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2081971, y: -0.000000008414668, z: 0.0000000017911593, w: 0.9780869}
+  m_LocalRotation: {x: 0.2081971, y: 0.000000008414667, z: -0.0000000017911591, w: 0.9780869}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7868,7 +7891,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7917931836949256293}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.24192211, y: 0.000000018665883, z: -0.0000000046539324, w: 0.97029567}
+  m_LocalRotation: {x: 0.24192211, y: -0.000000018665885, z: 0.000000004653933, w: 0.97029567}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
