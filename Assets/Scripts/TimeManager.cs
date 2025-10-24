@@ -88,14 +88,14 @@ public class TimeManager : MonoBehaviour
         // Simple on-screen display for time and player status - update once own UI system is in place
         GUI.skin.label.fontSize = 30;
 
-        GUI.Label(new Rect(10, 10, 300, 30), timeOfDay);
-        GUI.Label(new Rect(10, 40, 300, 30), currDay);
+        GUI.Label(new Rect(30, 10, 300, 40), timeOfDay);
+        GUI.Label(new Rect(30, 60, 300, 40), currDay);
         // Show TempSecs label for the first few seconds after the scene loads
         float labelDuration = 15f; // seconds to show the label
         if (Time.timeSinceLevelLoad < labelDuration)
         {
             GUI.Label(new Rect(500, 300, 300, 60), "SURVIVE!");
-            GUI.Label(new Rect(500, 380, 300, 60), "DAY 1/10");
+            GUI.Label(new Rect(500, 360, 300, 60), "DAY 1/10");
         }
 
     }
