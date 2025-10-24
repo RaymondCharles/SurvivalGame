@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem; // <<< Added Input System namespace
 using Cinemachine;
 
 public class CameraController : MonoBehaviour
@@ -10,79 +9,94 @@ public class CameraController : MonoBehaviour
     public float sensY = 400f;
     public Transform orientation;
     public Transform followTarget;
-    private float yRotation;
+    // private float yRotation; // Likely not needed directly
 
-    public Transform playerCam;
-    public GameObject FPCamera;
-    public GameObject TPCamera;
+    public Transform playerCam; // Might still be useful for initial reference or specific cases
     private bool isThirdPerson = false;
-    public KeyCode toggleKey = KeyCode.Q; // *** NEW: Reliable key bind for toggling ***
+    public Key toggleKey = Key.Q;
 
     public GameObject GameManager;
-    
-
 
     [SerializeField] private CinemachineFreeLook freeLookCamera;
-    [SerializeField] private CinemachineVirtualCamera virtualCam;
+    [SerializeField] private CinemachineVirtualCamera virtualCam; // First-Person VCam
     private CinemachinePOV pov;
 
     private void Start()
     {
-        if (freeLookCamera == null)
-            freeLookCamera = GetComponent<CinemachineFreeLook>();
+        if (freeLookCamera == null) freeLookCamera = GetComponentInChildren<CinemachineFreeLook>();
+        if (virtualCam == null) virtualCam = GetComponentInChildren<CinemachineVirtualCamera>();
 
-        if (virtualCam == null)
-            virtualCam = GetComponent<CinemachineVirtualCamera>();
+        if (virtualCam != null)
+        {
+            pov = virtualCam.GetCinemachineComponent<CinemachinePOV>();
+            if (pov == null) Debug.LogWarning("FP Virtual Camera is missing CinemachinePOV component!");
+        }
+        else { Debug.LogError("First Person Virtual Camera (virtualCam) not assigned or found!"); }
 
-        pov = virtualCam.GetCinemachineComponent<CinemachinePOV>();
+        if (freeLookCamera == null) Debug.LogError("Third Person FreeLook Camera (freeLookCamera) not assigned or found!");
 
         SetSensitivity(sensX, sensY);
 
-        // Lock cursor on start for FPV movement
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (virtualCam != null) virtualCam.Priority = 20;
+        if (freeLookCamera != null) freeLookCamera.Priority = 10;
+        isThirdPerson = false;
     }
 
-    //Changes cinemachine sensitivity
     public void SetSensitivity(float horizontal, float vertical)
     {
-        freeLookCamera.m_XAxis.m_MaxSpeed = horizontal; // horizontal rotation speed
-        freeLookCamera.m_YAxis.m_MaxSpeed = vertical / 100;   // vertical rotation speed
-        pov.m_HorizontalAxis.m_MaxSpeed = horizontal;
-        pov.m_VerticalAxis.m_MaxSpeed = vertical;
+        if (freeLookCamera != null)
+        {
+            freeLookCamera.m_XAxis.m_MaxSpeed = horizontal;
+            freeLookCamera.m_YAxis.m_MaxSpeed = vertical / 100;
+        }
+        if (pov != null)
+        {
+            pov.m_HorizontalAxis.m_MaxSpeed = horizontal;
+            pov.m_VerticalAxis.m_MaxSpeed = vertical;
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-
-        
-        // 1. Cursor Management for Resuming Control (Click to lock)
-        if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked && !GameManager.GetComponent<GameManager>().isInventoryOpen)
+        // --- NEW INPUT SYSTEM CHECKS ---
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame &&
+            Cursor.lockState != CursorLockMode.Locked &&
+            GameManager != null && !GameManager.GetComponent<GameManager>().isInventoryOpen)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
 
-        // 2. Guaranteed Toggle Check
-        if (Input.GetKeyDown(toggleKey))
+        if (Keyboard.current != null && Keyboard.current[toggleKey].wasPressedThisFrame)
         {
             ToggleView();
         }
+        // --- END NEW INPUT SYSTEM CHECKS ---
     }
 
+    // Corrected LateUpdate
     void LateUpdate()
     {
-        Vector3 yawOnly = new Vector3(0f, playerCam.eulerAngles.y, 0f);
-        orientation.rotation = Quaternion.Euler(yawOnly);
-        followTarget.rotation = Quaternion.Euler(yawOnly);
+        if (orientation == null || followTarget == null) return;
 
+        CinemachineBrain brain = CinemachineCore.Instance.GetActiveBrain(0);
+
+        if (brain != null && brain.ActiveVirtualCamera != null)
+        {
+            float currentYRotation = brain.ActiveVirtualCamera.State.FinalOrientation.eulerAngles.y;
+            orientation.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            followTarget.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+        }
     }
 
 
-    // Public method called by the UI button (or Q key)
     void ToggleView()
     {
+        if (virtualCam == null || freeLookCamera == null) return;
+
         isThirdPerson = !isThirdPerson;
 
         if (isThirdPerson)

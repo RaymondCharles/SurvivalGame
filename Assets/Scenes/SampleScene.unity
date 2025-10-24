@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -630,7 +630,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 7
   sprintSpeed: 15
-  groundDrag: 0
   isSliding: 0
   jumpForce: 5
   jumpCooldown: 0.25
@@ -642,11 +641,6 @@ MonoBehaviour:
   acceleration: 40
   deceleration: 5
   reverseDecelerationMultiplier: 3
-  jumpKey: 32
-  sprintKey: 304
-  crouchKey: 306
-  slideKey: 99
-  playerHeight: 2.1
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
@@ -7848,7 +7842,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2345251118307689590}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2081971, y: -0.000000008414667, z: 0.0000000017911591, w: 0.9780869}
+  m_LocalRotation: {x: 0.2081971, y: 0.000000008414668, z: -0.0000000017911593, w: 0.9780869}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8237,9 +8231,7 @@ MonoBehaviour:
   orientation: {fileID: 665086287}
   followTarget: {fileID: 1251816427}
   playerCam: {fileID: 5050017666814163782}
-  FPCamera: {fileID: 7250612098096242724}
-  TPCamera: {fileID: 620217829946020812}
-  toggleKey: 113
+  toggleKey: 31
   GameManager: {fileID: 357655312}
   freeLookCamera: {fileID: 6780494452453072864}
   virtualCam: {fileID: 716353418007762722}
@@ -8800,6 +8792,7 @@ GameObject:
   - component: {fileID: 7002519735197355498}
   - component: {fileID: 5445391573197114529}
   - component: {fileID: 7953674010097304447}
+  - component: {fileID: 8526149214545222404}
   m_Layer: 0
   m_Name: PlayerCam
   m_TagString: Untagged
@@ -9195,6 +9188,22 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &8526149214545222404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7348181587708857638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7194dc27b9df64c8beca7482ee8e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerIndex: -1
+  AutoEnableInputs: 1
+  XYAxis: {fileID: -7505403860615332903, guid: 2c8596994fb735e48a7840c97ea949b8, type: 3}
+  ZAxis: {fileID: -7505403860615332903, guid: 2c8596994fb735e48a7840c97ea949b8, type: 3}
 --- !u!4 &8749970186648464446
 Transform:
   m_ObjectHideFlags: 0
@@ -9291,8 +9300,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 410087041}
-  - {fileID: 832575519}
   - {fileID: 56935149}
+  - {fileID: 832575519}
   - {fileID: 1758561371394525808}
   - {fileID: 1932835141}
   - {fileID: 998791451}
