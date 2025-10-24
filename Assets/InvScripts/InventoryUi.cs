@@ -6,39 +6,44 @@ using UnityEngine.Rendering;
 
 public class InventoryUi : MonoBehaviour
 {
-    [Header("References")]
+
     public GameObject uiItemPrefab;
     public Inventory inventory;
     public Transform uiInventoryParent;
     public InvDropPanel invDropPanel;
     public InvPlanelUse invUsePanel;
-    public PlayerStatss playerStats;
+    public VitalsBarBinder playerVitals;
 
     public ItemUi selectedItemUi;
     public string currentItemId;
     public Item currentItem;
 
-
     [SerializeField]
     SerializedDictionary<string, GameObject> inventoryUI = new();
 
+    private void Start()
+    {
+        // Make sure vitals are assigned
+        if (!playerVitals)
+        {
+            playerVitals = FindFirstObjectByType<VitalsBarBinder>();
+        }
+    }
+
     public void AddUIItem(string inventoryId, Item item)
     {
-        var itemUI = Instantiate(uiItemPrefab,uiInventoryParent).GetComponent<ItemUi>();
+        var itemUI = Instantiate(uiItemPrefab, uiInventoryParent).GetComponent<ItemUi>();
         inventoryUI.Add(inventoryId, itemUI.gameObject);
         itemUI.Initialize(inventoryId, item, OnItemSelected);
     }
 
-    // Called when an item UI is clicked/selected
     private void OnItemSelected(string inventoryId)
     {
         if (!inventory.TryGetItem(inventoryId, out var item))
             return;
 
         if (selectedItemUi != null)
-        {
             selectedItemUi.SetSelected(false);
-        }
 
         selectedItemUi = inventoryUI[inventoryId].GetComponent<ItemUi>();
         selectedItemUi.SetSelected(true);
@@ -49,30 +54,20 @@ public class InventoryUi : MonoBehaviour
         invDropPanel.Show(OnDropConfirmed);
 
         if (item.isConsumable)
-        {
             invUsePanel.Show(item, OnUseConfirmed);
-
-        }
         else
-        {
             invUsePanel.gameObject.SetActive(false);
-        }
     }
 
-    public void UpdateUIItemCount(string inventoryId,int count)
+    public void UpdateUIItemCount(string inventoryId, int count)
     {
-        if(inventoryUI.TryGetValue(inventoryId,out var itemUiobj))
+        if (inventoryUI.TryGetValue(inventoryId, out var itemUiObj))
         {
-            var itemUi = itemUiobj.GetComponent<ItemUi>();
-            itemUi.SetCount(count); 
+            var itemUi = itemUiObj.GetComponent<ItemUi>();
+            itemUi.SetCount(count);
         }
-
-
     }
 
-
-
-    // Called when user confirms dropping the item
     private void OnDropConfirmed()
     {
         inventory.DropItem(currentItemId);
@@ -82,14 +77,22 @@ public class InventoryUi : MonoBehaviour
             selectedItemUi.SetSelected(false);
             selectedItemUi = null;
         }
+
         currentItem = null;
         currentItemId = null;
     }
 
-    // Called when user confirms using the item
     private void OnUseConfirmed()
     {
-        playerStats.IncreaseStats(currentItem.hpRestoreAmount, currentItem.hungerRestoreAmount);
+        if (playerVitals != null && currentItem != null && currentItem.isConsumable)
+        {
+            if (currentItem.hpRestoreAmount > 0)
+                playerVitals.AddHealth(currentItem.hpRestoreAmount);
+
+            if (currentItem.hungerRestoreAmount > 0)
+                playerVitals.AddHunger(currentItem.hungerRestoreAmount);
+        }
+
         inventory.RemoveItemFromInventory(currentItemId);
     }
 

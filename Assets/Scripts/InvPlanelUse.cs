@@ -59,10 +59,10 @@ public class InvPlanelUse : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        //if (invDropPanel != null)
-        //{
-        //    invDropPanel.SetActive(false);
-        //}
+        if (invDropPanel != null)
+        {
+            invDropPanel.SetActive(false);
+        }
     }
 
     private void OnNoClicked()

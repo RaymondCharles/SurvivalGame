@@ -11,8 +11,8 @@ public class Item : ScriptableObject
 
     [Header("Usage Settings")]
     public bool isConsumable;      // Can the player use it?
-    public int hpRestoreAmount;    // How much HP it restores
-    public int hungerRestoreAmount;// How much Hunger it restores
+    public float hpRestoreAmount;    // How much HP it restores
+    public float hungerRestoreAmount;// How much Hunger it restores
 
     // Optional: if you want items that can be both dropped and used differently
     public bool canBeDropped = true;
