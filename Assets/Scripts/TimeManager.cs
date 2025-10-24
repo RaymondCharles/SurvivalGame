@@ -30,6 +30,7 @@ public class TimeManager : MonoBehaviour
         minutesPerSecond = 1440f / dayDurationInSeconds;
         Hours = 6;
         Days = 1;
+        GM.SwitchTime();
     }
 
     public void Update()
