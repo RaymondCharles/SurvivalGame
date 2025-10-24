@@ -264,7 +264,7 @@ public class TerrainGenerator : MonoBehaviour
         {
             Points = snowPoints;
         }
-        Vector2Int randomPoint = Points[Random.Range(0, Points.Count)];
+        Vector2Int randomPoint = Points[Random.Range(0, Points.Count - 1)];
         int randomX = randomPoint.x;
         int randomZ = randomPoint.y;
 
