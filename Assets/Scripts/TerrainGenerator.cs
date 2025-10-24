@@ -14,9 +14,9 @@ public class TerrainGenerator : MonoBehaviour
     // Terrain dimensions - serialized fields with inspector sliders and validated properties
     [Header("Terrain Dimensions")]
     //[SerializeField, Range(128, 8192), Tooltip("Width (heightmap samples)")]
-    private int width = 2000;
+    private int width = 800;
     //[SerializeField, Range(128, 8192), Tooltip("Height (heightmap samples)")]
-    private int height = 2000;
+    private int height = 800;
     //[SerializeField, Range(1, 512), Tooltip("Max vertical size")]
     private int depth = 70;
     //[SerializeField, Range(0.1f, 500f), Tooltip("Noise scale")]
@@ -119,10 +119,10 @@ public class TerrainGenerator : MonoBehaviour
                 if (currBiome == 0) // Grassland biome
                 {
                     grassPoints.Add(new Vector2Int(x,y));
-                    baseAmplitude = 2f;
-                    baseFrequency = 4f;
+                    baseAmplitude = 2.8f;
+                    baseFrequency = 3.2f;
                     lacunarity = 0.25f;
-                    depth = 100;
+                    depth = 80;
                 }
                 else if (currBiome == 1) // Desert biome
                 {
@@ -130,15 +130,15 @@ public class TerrainGenerator : MonoBehaviour
                     baseAmplitude = 0.5f; // Lower amplitude for flatter terrain
                     baseFrequency = 2.5f;   // Higher frequency for more variation
                     usedOctaves = 4;      // local override for desert
-                    depth = 60;
+                    depth = 50;
                 }
                 else if (currBiome == 2) // Snow biome
                 {
                     snowPoints.Add(new Vector2Int(x,y));
-                    baseAmplitude = 4f; // Lower amplitude for flatter terrain
-                    baseFrequency = 4f;   // Lower frequency for more variation
+                    baseAmplitude = 3f; // Lower amplitude for flatter terrain
+                    baseFrequency = 3f;   // Lower frequency for more variation
                     usedOctaves = 2;      // local override for snow
-                    depth = 150;          // Taller terrain for mountains
+                    depth = 100;          // Taller terrain for mountains
                     lacunarity = 0.25f;
                 }
                 
