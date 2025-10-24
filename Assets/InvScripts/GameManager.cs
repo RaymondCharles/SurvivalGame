@@ -36,9 +36,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject[] snowEnvPrefabs;
 
 
-    public int day = 0;
+    public int day = 1;
     private List<GameObject> Enemies = new List<GameObject>();
-    private List<GameObject> EnvironmentObjects = new List<GameObject>();
     private int baseEnemyCount = 20;
 
     //Parameters for Enemy AI Script
@@ -54,6 +53,7 @@ public class GameManager : MonoBehaviour
         public GameObject[] enemyDayPrefabs;
         public GameObject[] enemyNightPrefabs;
         public GameObject[] environmentPrefabs;
+        public List<GameObject> environmentObjects;
     }
 
     private BiomePrefabs[] biomePrefabs = new BiomePrefabs[3];
@@ -80,6 +80,8 @@ public class GameManager : MonoBehaviour
     }
 
 
+
+
     //Bake the meshes as soon as the map loads.
     void Start()
     {
@@ -87,23 +89,25 @@ public class GameManager : MonoBehaviour
 
         biomePrefabs[0] = new BiomePrefabs
         {
-            enemyDayPrefabs = desertEnemyDayPrefabs,
-            enemyNightPrefabs = desertEnemyNightPrefabs,
-            environmentPrefabs = desertEnvPrefabs
+            enemyDayPrefabs = grassEnemyDayPrefabs,
+            enemyNightPrefabs = grassEnemyNightPrefabs,
+            environmentPrefabs = grassEnvPrefabs,
+            environmentObjects = new List<GameObject>()
         };
 
         biomePrefabs[1] = new BiomePrefabs
         {
-            enemyDayPrefabs = grassEnemyDayPrefabs,
-            enemyNightPrefabs = grassEnemyNightPrefabs,
-            environmentPrefabs = grassEnvPrefabs
+            enemyDayPrefabs = desertEnemyDayPrefabs,
+            enemyNightPrefabs = desertEnemyNightPrefabs,
+            environmentPrefabs = desertEnvPrefabs,
+            environmentObjects = new List<GameObject>()
         };
-
         biomePrefabs[2] = new BiomePrefabs
         {
             enemyDayPrefabs = snowEnemyDayPrefabs,
             enemyNightPrefabs = snowEnemyNightPrefabs,
-            environmentPrefabs = snowEnvPrefabs
+            environmentPrefabs = snowEnvPrefabs,
+            environmentObjects = new List<GameObject>()
         };
     }
 
@@ -137,41 +141,45 @@ public class GameManager : MonoBehaviour
             Enemies.RemoveAt(0);
         }
 
-
+        int count = 0; // count to track biome index
         foreach (BiomePrefabs biome in biomePrefabs)
         {
+            Debug.Log("Is running" + count);
             GameObject[] enemyPrefabs;
             enemyPrefabs = (timeOfDay == dayState.night) ? biome.enemyNightPrefabs : biome.enemyDayPrefabs;
 
-            for (int i=0; i < enemyCount; i++)
+            for (int i = 0; i < enemyCount; i++)
             {
-                Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
+                Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain(count);
                 int index = Random.Range(0, (enemyPrefabs.Length - 1));
                 Debug.Log(enemyPrefabs);
                 Debug.Log(index);
-                Enemies.Add(SpawnObject(enemyPrefabs[index], timeOfDay));
+                Enemies.Add(SpawnObject(enemyPrefabs[index], timeOfDay, count));
             }
 
             GameObject[] environmentPrefabs = biome.environmentPrefabs;
-            int environmentObjectCount = Random.Range(40, 70);
-            environmentObjectCount -= EnvironmentObjects.Count;
+            int environmentObjectCount = Random.Range(40, 60); // 4 to test biome spawning quickly
+            environmentObjectCount -= biome.environmentObjects.Count;
             if (environmentObjectCount > 0)
             {
-                for (int i=0; i<environmentObjectCount; i++)
+                for (int i = 0; i < environmentObjectCount; i++)
                 {
-                    Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
+                    Debug.Log("Spawning environment object in biome index: " + count);
+                    Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain(count);
                     int index = Random.Range(0, (environmentPrefabs.Length - 1));
-                    EnvironmentObjects.Add(SpawnObject(environmentPrefabs[index], timeOfDay));
+                    biome.environmentObjects.Add(SpawnObject(environmentPrefabs[index], timeOfDay, count));
+                    Debug.Log("Spawned environment object: " + environmentPrefabs[index].name);
                 }
             }
+            count++;
         }
        
     }
 
 
-    public GameObject SpawnObject(GameObject prefab, dayState timeOfDay)
+    public GameObject SpawnObject(GameObject prefab, dayState timeOfDay, int biome)
     {
-        Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain();
+        Vector3 position = Terrain.GetComponent<TerrainGenerator>().GetRandomPointOnTerrain(biome);
         GameObject objectSpawn = Instantiate(prefab, position, Quaternion.identity);
         if (objectSpawn.CompareTag("Enemy"))
         {

@@ -20,7 +20,6 @@ public class swordBehaviour : MonoBehaviour
     {
         if (canAttack)
         {
-            Debug.Log("Attacking");
             prevAttack = Time.time;
             attackCombo +=1;
             if (attackCombo > 3)
@@ -74,7 +73,6 @@ public class swordBehaviour : MonoBehaviour
             {
                 enemiesHit.Add(enemy);
                 enemy.GetComponent<EnemyHealth>().TakeDamage(swordDamage);
-                Debug.Log("Enemy Hit: " + enemy.name);
             }
         }
         else if (other.CompareTag("Mineable"))

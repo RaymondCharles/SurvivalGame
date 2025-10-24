@@ -22,12 +22,14 @@ public class TimeManager : MonoBehaviour
 
     public GameManager GM;
 
-    public float dayDurationInSeconds = 360f; // 2 minutes for full 24h in game cycle
+    public float dayDurationInSeconds = 600f; // 2 minutes for full 24h in game cycle
     private float minutesPerSecond;
 
     void Start()
     {
         minutesPerSecond = 1440f / dayDurationInSeconds;
+        Hours = 6;
+        Days = 1;
     }
 
     public void Update()
