@@ -4,22 +4,24 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     [Header("Required Components")]
+    //Required Components
     public NavMeshAgent agent;
     public Transform player;
-    public PlayerStats playerStats;
+    //public PlayerStats playerStats;
+    public PlayerVitals playerVitals;   
     public GameObject projectilePrefab;
     public Transform firePoint;
     public LayerMask whatIsGround;
 
-    [Header("Health - Managed by EnemyHealth.cs")]
-    // Health logic is now in the separate EnemyHealth.cs script
+    
+    //Health -  Health logic is now in the separate EnemyHealth.cs script
 
-    [Header("AI Stats")]
+    //AI Stats
     private float sightRange = 300f;
     public float rangedAttackRange = 15f;
     public float meleeAttackRange = 3f;
 
-    [Header("Attack Settings")]
+    //Attack Settings
     public float timeBetweenAttacks = 1.5f;
     public float projectileSpeed = 60f;
     public int projectileDamage = 5;
@@ -90,7 +92,7 @@ public class EnemyAI : MonoBehaviour
             alreadyAttacked = true;
             if (!meleeBlocked)
             {
-                playerStats.TakeDamage(meleeDamage);
+                playerVitals.Damage(meleeDamage);
             }
             else
             {

@@ -19,8 +19,8 @@ public class enemyProjectileScript : MonoBehaviour
 
 
             //Script variable would be used here instead of only playerStats so that this script isn't just for enemies but can be used universally.
-            collision.gameObject.GetComponentInParent<PlayerStats>().TakeDamage(Damage);
-            Debug.Log("Player Hit! New HP is " + collision.gameObject.GetComponentInParent<PlayerStats>().hp);
+            collision.gameObject.GetComponentInParent<PlayerVitals>().Damage(Damage);
+            Debug.Log("Player Hit! New HP is " + collision.gameObject.GetComponentInParent<PlayerVitals>().HP);
         }
         Destroy(gameObject);
     }
