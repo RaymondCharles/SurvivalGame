@@ -13,7 +13,7 @@ public class ButtonScript : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     public AudioClip uncompressed;
     public AudioSource source;
 
-   
+
     public string sceneToLoad;
     public float loadDelay = 1f;
 
@@ -33,6 +33,6 @@ public class ButtonScript : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     private IEnumerator LoadSceneWithDelay()
     {
         yield return new WaitForSeconds(loadDelay);
-        SceneLoading.Load(sceneToLoad);
+        SceneManager.LoadScene(sceneToLoad);
     }
 }

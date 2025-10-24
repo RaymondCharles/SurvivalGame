@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneLoading
+public class SceneLoading : MonoBehaviour
 {
 
-    public static string sceneLoad;
+    //public static string sceneLoad;
 
-    public static void Load(string targetScene)
-    {
-        sceneLoad = targetScene;
-        SceneManager.LoadScene("LoadingScene");
+    //public static void Load(string targetScene)
+    //{
+    //    sceneLoad = targetScene;
+    //    SceneManager.LoadScene("LoadingScene");
 
-    }
+    //}
     // Start is called before the first frame update
     void Start()
     {
