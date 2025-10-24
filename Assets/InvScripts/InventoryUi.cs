@@ -50,7 +50,8 @@ public class InventoryUi : MonoBehaviour
 
         if (item.isConsumable)
         {
-            invUsePanel.Show(OnUseConfirmed);
+            invUsePanel.Show(item, OnUseConfirmed);
+
         }
         else
         {
