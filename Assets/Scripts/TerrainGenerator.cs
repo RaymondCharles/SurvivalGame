@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.AI.Navigation;
 using System.Linq; // used for Sum of array
+using System.Collections.Generic;
 
 //TODO:
 // 1. Add Octaves to create more complex terrain DONE
@@ -59,6 +60,13 @@ public class TerrainGenerator : MonoBehaviour
     private Terrain terrain;
     public int[,] biomeMap;
 
+    //Point arrays for each biome
+    private List<Vector2Int> grassPoints = new List<Vector2Int>();
+    private List<Vector2Int> desertPoints = new List<Vector2Int>();
+    private List<Vector2Int> snowPoints = new List<Vector2Int>();
+
+
+
     public void StartWorld()
     {
         // Generate Voronoi diagram for biome map
@@ -110,6 +118,7 @@ public class TerrainGenerator : MonoBehaviour
 
                 if (currBiome == 0) // Grassland biome
                 {
+                    grassPoints.Add(new Vector2Int(x,y));
                     baseAmplitude = 2f;
                     baseFrequency = 4f;
                     lacunarity = 0.25f;
@@ -117,6 +126,7 @@ public class TerrainGenerator : MonoBehaviour
                 }
                 else if (currBiome == 1) // Desert biome
                 {
+                    desertPoints.Add(new Vector2Int(x,y));
                     baseAmplitude = 0.5f; // Lower amplitude for flatter terrain
                     baseFrequency = 2.5f;   // Higher frequency for more variation
                     usedOctaves = 4;      // local override for desert
@@ -124,6 +134,7 @@ public class TerrainGenerator : MonoBehaviour
                 }
                 else if (currBiome == 2) // Snow biome
                 {
+                    snowPoints.Add(new Vector2Int(x,y));
                     baseAmplitude = 4f; // Lower amplitude for flatter terrain
                     baseFrequency = 4f;   // Lower frequency for more variation
                     usedOctaves = 2;      // local override for snow
@@ -240,28 +251,26 @@ public class TerrainGenerator : MonoBehaviour
         float terrainPosX = terrain.transform.position.x;
         float terrainPosZ = terrain.transform.position.z;
 
-        int randomX = Random.Range(0, Width);
-        int randomZ = Random.Range(0, Height);
-
-        int attempts = 0;
-        int maxAttempts = 10; // currently set low for testing purposes, would need to be some multiple of biome types
-
-        while (biomeMap[randomX, randomZ] != biome && attempts++ < maxAttempts)
+        List<Vector2Int> Points;
+        if (biome == 0)
         {
-            Debug.Log(randomX + "," + randomZ + " is biome " + biomeMap[randomX, randomZ] + ", looking for " + biome);
-            randomX = Random.Range(0, Width);
-            randomZ = Random.Range(0, Height);
+            Points = grassPoints;
         }
-
-        if (biomeMap[randomX, randomZ] != biome)
+        else if (biome == 1)
         {
-            Debug.Log("Failed to find matching biome");
-            return Vector3.zero;
+            Points = desertPoints;
         }
+        else
+        {
+            Points = snowPoints;
+        }
+        Vector2Int randomPoint = Points[Random.Range(0, Points.Count)];
+        int randomX = randomPoint.x;
+        int randomZ = randomPoint.y;
 
         float y = terrain.SampleHeight(new Vector3((float)randomX + terrainPosX, 0f, (float)randomZ + terrainPosZ));
 
-        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y + 10f, (float)randomZ + terrainPosZ); // add slight offset to Y to avoid spawning inside terrain
+        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y, (float)randomZ + terrainPosZ); // add slight offset to Y to avoid spawning inside terrain
         if (Physics.Raycast(worldPos + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f))
         {
             worldPos.y = hit.point.y + 0.1f;

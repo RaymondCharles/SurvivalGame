@@ -1955,7 +1955,7 @@ MonoBehaviour:
   snowEnemyNightPrefabs:
   - {fileID: 1729192208607200507, guid: 7a2b0d896eaaf5c468c67d0d1dbfee05, type: 3}
   snowEnvPrefabs:
-  - {fileID: 5383254103439360920, guid: 5944850e69ff0254fa50ba9e0aa6ec71, type: 3}
+  - {fileID: 8645654192271721578, guid: 78f157abaa6cf504aa5e71b7b6dccd7a, type: 3}
   day: 0
   player: {fileID: 56935149}
   playerStats: {fileID: 0}
@@ -7922,7 +7922,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2345251118307689590}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2081971, y: 0.000000008414668, z: -0.0000000017911593, w: 0.9780869}
+  m_LocalRotation: {x: 0.2081971, y: -0.000000008414667, z: 0.0000000017911591, w: 0.9780869}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8328,7 +8328,7 @@ GameObject:
   - component: {fileID: 1758561371394525808}
   - component: {fileID: 2013763637183645848}
   m_Layer: 0
-  m_Name: CameraHolder (1)
+  m_Name: CameraHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8486,7 +8486,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7917931836949256293}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.24192211, y: 0.000000018665885, z: -0.000000004653933, w: 0.97029567}
+  m_LocalRotation: {x: 0.24192211, y: -0.000000018665883, z: 0.0000000046539324, w: 0.97029567}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
