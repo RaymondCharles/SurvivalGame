@@ -65,8 +65,6 @@ public class TerrainGenerator : MonoBehaviour
     private List<Vector2Int> desertPoints = new List<Vector2Int>();
     private List<Vector2Int> snowPoints = new List<Vector2Int>();
 
-
-
     public void StartWorld()
     {
         // Generate Voronoi diagram for biome map
@@ -323,7 +321,21 @@ public class TerrainGenerator : MonoBehaviour
                     }
                 }
                 // Once looped through all nearby points, assign color of closest cell
-                biomeMap[x, y] = cellBiomesArray[closestCell.x, closestCell.y];
+                int biome = cellBiomesArray[closestCell.x, closestCell.y];
+                biomeMap[x, y] = biome;
+                if (biome == 0)
+                {
+                    grassPoints.Add(new Vector2Int(x,y));
+                }
+                else if (biome == 1)
+                {
+                    desertPoints.Add(new Vector2Int(x,y));
+                }
+                else if (biome == 2)
+                {
+                    snowPoints.Add(new Vector2Int(x,y));
+                }
+
             }
         }
         return biomeMap;
