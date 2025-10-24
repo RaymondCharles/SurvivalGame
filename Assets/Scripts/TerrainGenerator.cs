@@ -263,7 +263,12 @@ public class TerrainGenerator : MonoBehaviour
         float y = terrain.SampleHeight(new Vector3((float)randomX + terrainPosX, 0f, (float)randomZ + terrainPosZ));
 
         // Convert to world coordinates
-        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y, (float)randomZ + terrainPosZ);
+        Vector3 worldPos = new Vector3((float)randomX + terrainPosX, y + 1f, (float)randomZ + terrainPosZ); // add slight offset to Y to avoid spawning inside terrain
+        if (Physics.Raycast(worldPos + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f))
+        {
+            worldPos.y = hit.point.y + 0.1f;
+        }
+
         Debug.Log("Found point at " + worldPos);
         return worldPos;
     }

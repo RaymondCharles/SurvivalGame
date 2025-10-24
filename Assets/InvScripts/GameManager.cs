@@ -75,6 +75,14 @@ public class GameManager : MonoBehaviour
             enemyNightPrefabs = desertEnemyNightPrefabs,
             environmentPrefabs = desertEnvPrefabs
         };
+        /***
+        biomePrefabs[2] = new BiomePrefabs
+        {
+            enemyDayPrefabs = snowEnemyDayPrefabs,
+            enemyNightPrefabs = snowEnemyNightPrefabs,
+            environmentPrefabs = snowEnvPrefabs
+        };
+        ***/
     }
 
     void Update()
@@ -123,7 +131,7 @@ public class GameManager : MonoBehaviour
             }
 
             GameObject[] environmentPrefabs = biome.environmentPrefabs;
-            int environmentObjectCount = Random.Range(40, 70);
+            int environmentObjectCount = Random.Range(70, 100);
             environmentObjectCount -= EnvironmentObjects.Count;
             if (environmentObjectCount > 0)
             {

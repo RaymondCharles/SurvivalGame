@@ -10,6 +10,7 @@ public class mineableBehaviour : MonoBehaviour
 
     public void SpawnMaterials(int swordDamage)
     {
+        Debug.Log("Mining stone with " + swordDamage + " sword damage.");
         int numToSpawn = Mathf.Min((HP / 10), (swordDamage / 10));
         for (int i=0; i< numToSpawn; i++)
         {
