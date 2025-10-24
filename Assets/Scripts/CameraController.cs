@@ -18,8 +18,11 @@ public class CameraController : MonoBehaviour
     public GameObject TPCamera;
     private bool isThirdPerson = false;
     public Key toggleKey = Key.Q; //Keybind for switching between cameras
+    public Key enemyLock = Key.F; //Keybind for locking in on an enemy
 
     public GameObject GameManager;
+    
+    private Quaternion prevRotation;
     
 
 
@@ -88,8 +91,10 @@ public class CameraController : MonoBehaviour
 
         if (isThirdPerson)
         {
+            prevRotation = playerCam.rotation;
             freeLookCamera.Priority = 20;
             virtualCam.Priority = 10;
+            Invoke(nameof(ResetView), 0.1f);
         }
         else
         {
@@ -97,4 +102,9 @@ public class CameraController : MonoBehaviour
             freeLookCamera.Priority = 10;
         }
     }
+
+    void ResetView()
+    {   
+        playerCam.rotation = prevRotation;
+    }
 }
