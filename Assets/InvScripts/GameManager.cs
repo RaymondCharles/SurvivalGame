@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     public int day = 1;
     private List<GameObject> Enemies = new List<GameObject>();
-    private int baseEnemyCount = 20;
+    private int baseEnemyCount = 40;
 
     //Parameters for Enemy AI Script
     public Transform player;
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
     public PlayerVitals playerVitals;
 
     public enum dayState { day, night }
-    public dayState timeOfDay;
+    public dayState timeOfDay = dayState.night;
 
     public struct BiomePrefabs
     {
