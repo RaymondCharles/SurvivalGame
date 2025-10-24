@@ -896,9 +896,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 206663804}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f978bc1658808b42a72890767374366, type: 3}
+  m_Script: {fileID: 11500000, guid: eb835659fc1eb934189240c0f5c634ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vitalsBar: {fileID: 803277903}
+  isHp: 0
 --- !u!1001 &212233212
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4253,6 +4255,11 @@ PrefabInstance:
       propertyPath: invDropPanel
       value: 
       objectReference: {fileID: 390051809}
+    - target: {fileID: 4826807324677493235, guid: cd28518cf2a29c44abb554a2df8381f0,
+        type: 3}
+      propertyPath: playerVitals
+      value: 
+      objectReference: {fileID: 803277903}
     - target: {fileID: 9184075452202010941, guid: cd28518cf2a29c44abb554a2df8381f0,
         type: 3}
       propertyPath: m_Name
@@ -4817,9 +4824,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2019495872}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f978bc1658808b42a72890767374366, type: 3}
+  m_Script: {fileID: 11500000, guid: eb835659fc1eb934189240c0f5c634ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vitalsBar: {fileID: 803277903}
+  isHp: 1
 --- !u!1001 &2045982536
 PrefabInstance:
   m_ObjectHideFlags: 0
