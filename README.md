@@ -28,6 +28,8 @@ Hold your Left Mouse Button to Use your Shield
 Press Q to Toggle between First Person and Third Person Mode
 Press E to open your inventory
 
+To Mine a Rock, or to Chop down a tree, or to Harvest a Snowball, use a Right Mouse Button with a sword equipped
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
